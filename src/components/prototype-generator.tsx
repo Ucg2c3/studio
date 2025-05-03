@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react'; // Updated import
+import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -44,8 +45,8 @@ export function PrototypeGenerator() {
   const { toast } = useToast();
   const [copied, setCopied] = React.useState(false);
 
-  // useFormState hook manages state updates from server actions
-  const [state, formAction] = useFormState(generateAppPrototypeAction, {
+  // useActionState hook manages state updates from server actions
+  const [state, formAction] = useActionState(generateAppPrototypeAction, { // Updated usage
     message: '',
     data: undefined,
     error: undefined,
@@ -154,7 +155,24 @@ export function PrototypeGenerator() {
                     <FormControl>
                       <Textarea
                         id="appDescription"
-                        placeholder="e.g., A simple blog application with a homepage listing posts, individual post pages, and an about page. Use cards for posts..."
+                        placeholder={`An agentic AI platform designed to securely connect different cloud services and tech company APIs.  The core features include:
+
+1.  Autonomous Agent Management:  The AI should be able to create, manage, and deploy autonomous agents, each responsible for a specific integration task.  These agents operate independently but can communicate with each other.
+
+2.  Secure Network:  Emphasize that the platform operates on its own secure, private network, isolated from the public internet.  It should demonstrate secure communication protocols and data encryption methods.
+
+3.  Cloud Connector Modules:  The AI should have pre-built connector modules for popular cloud platforms like AWS, Azure, and Google Cloud, and be able to connect with tech company APIs like Salesforce, Zendesk, and Stripe.
+
+4.  Data Transformation and Routing:  The AI can transform data formats and route data between different systems.
+
+5.  Monitoring and Logging: The AI should have monitoring and logging capabilities to track agent performance and network activity.
+
+The prototype should demonstrate a user interface where users can:
+
+*   Create and configure agents.
+*   Define data mappings between cloud services.
+*   Monitor agent activity and network status.
+*   View logs and reports.`}
                         className="min-h-[150px] resize-none"
                         {...field}
                       />
