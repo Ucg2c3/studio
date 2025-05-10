@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon } from 'lucide-react';
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
@@ -77,7 +77,7 @@ export default function RootLayout({
                         </SidebarGroupLabel>
                       </TooltipTrigger>
                       <TooltipContent side="right" align="center">
-                        <p>Configure network monitoring settings, alerts, and ignored IPs.</p>
+                        <p>Configure network monitoring settings, alerts, and ignored IPs for enhanced security and performance.</p>
                       </TooltipContent>
                     </Tooltip>
                     <SidebarGroupContent>
@@ -116,7 +116,7 @@ export default function RootLayout({
                         </SidebarGroupLabel>
                       </TooltipTrigger>
                       <TooltipContent side="right" align="center">
-                        <p>Catch up on the latest top headlines.</p>
+                        <p>Catch up on the latest top headlines and stay informed.</p>
                       </TooltipContent>
                     </Tooltip>
                     <SidebarGroupContent>

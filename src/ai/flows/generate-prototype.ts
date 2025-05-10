@@ -47,7 +47,7 @@ When generating the prototype, adhere to the following style guidelines:
 Ensure the generated code is complete and ready to be exported as a Next.js project. This includes generating full, runnable Next.js files (e.g., content for page.tsx or component.tsx files, suitable for the App Router structure).
 The prototype should include necessary Tailwind CSS classes for styling according to the guidelines above.
 Also, include a detailed description of the generated layout, components, and features.
-If the appDescription mentions security, emphasize security features in the user interface, such as visual cues for encryption, secure connections, and network isolation. If a security report is requested, include a section for it in the UI.
+If the appDescription mentions security, emphasize security features in the user interface, such as visual cues for encryption (e.g., lock icons), secure connections (e.g., shield icons, indicators for HTTPS), and network isolation. If a security report is requested, include a dedicated section or card in the UI for displaying this report.
 The generated 'prototypeCode' should be the content of a single React component or page file (e.g., page.tsx). Do not try to generate multiple files or a full project structure in 'prototypeCode'.
 `,
 });
