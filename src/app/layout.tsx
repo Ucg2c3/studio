@@ -2,12 +2,14 @@ import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft } from 'lucide-react'; // Example icon
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
 import { RamUsageDisplay } from '@/components/sidebar/ram-usage-display';
 import { AdCreator } from '@/components/sidebar/ad-creator';
+import { WeatherForecast } from '@/components/sidebar/weather-forecast';
+import { NewsFeed } from '@/components/sidebar/news-feed';
 
 
 const geistSans = Geist({
@@ -80,6 +82,22 @@ export default function RootLayout({
                   </SidebarGroupLabel>
                   <SidebarGroupContent>
                     <AdCreator />
+                  </SidebarGroupContent>
+                </SidebarGroup>
+                 <SidebarGroup>
+                  <SidebarGroupLabel className="flex items-center">
+                    <CloudSunIcon className="mr-2 h-4 w-4" /> Weather
+                  </SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <WeatherForecast />
+                  </SidebarGroupContent>
+                </SidebarGroup>
+                <SidebarGroup>
+                  <SidebarGroupLabel className="flex items-center">
+                    <NewspaperIcon className="mr-2 h-4 w-4" /> News
+                  </SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <NewsFeed />
                   </SidebarGroupContent>
                 </SidebarGroup>
               </SidebarContent>
