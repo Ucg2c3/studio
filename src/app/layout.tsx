@@ -1,16 +1,20 @@
+
+import * as React from 'react';
 import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon } from 'lucide-react';
-import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon } from 'lucide-react';
+import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
 import { RamUsageDisplay } from '@/components/sidebar/ram-usage-display';
 import { AdCreator } from '@/components/sidebar/ad-creator';
 import { WeatherForecast } from '@/components/sidebar/weather-forecast';
 import { NewsFeed } from '@/components/sidebar/news-feed';
+import { ImageCreator } from '@/components/sidebar/image-creator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 
 const geistSans = Geist({
@@ -66,7 +70,7 @@ export default function RootLayout({
             <div className="flex flex-1">
               <Sidebar side="left" variant="sidebar" collapsible="icon">
                 <SidebarHeader>
-                   <h2 className="text-lg font-semibold">Settings Panel</h2>
+                   <h2 className="text-lg font-semibold text-foreground text-center md:text-left">Settings Panel</h2>
                 </SidebarHeader>
                 <SidebarContent>
                   <SidebarGroup>
@@ -85,25 +89,61 @@ export default function RootLayout({
                     </SidebarGroupContent>
                   </SidebarGroup>
                   <SidebarGroup>
-                    <SidebarGroupLabel className="flex items-center">
-                      <ZapIcon className="mr-2" /> System Status
-                    </SidebarGroupLabel>
+                     <Tooltip>
+                        <TooltipTrigger asChild>
+                            <SidebarGroupLabel className="flex items-center">
+                            <ZapIcon className="mr-2" /> System Status
+                            </SidebarGroupLabel>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="center">
+                            <p>View current system resource utilization, including RAM usage.</p>
+                        </TooltipContent>
+                    </Tooltip>
                     <SidebarGroupContent>
                       <RamUsageDisplay />
                     </SidebarGroupContent>
                   </SidebarGroup>
                   <SidebarGroup>
-                    <SidebarGroupLabel className="flex items-center">
-                       <AnnoyedIcon className="mr-2" /> Ad Creator
-                    </SidebarGroupLabel>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <SidebarGroupLabel className="flex items-center">
+                            <AnnoyedIcon className="mr-2" /> Ad Creator
+                            </SidebarGroupLabel>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="center">
+                            <p>Design and submit advertisements for review and publishing.</p>
+                        </TooltipContent>
+                    </Tooltip>
                     <SidebarGroupContent>
                       <AdCreator />
                     </SidebarGroupContent>
                   </SidebarGroup>
+                  <SidebarGroup>
+                     <Tooltip>
+                        <TooltipTrigger asChild>
+                            <SidebarGroupLabel className="flex items-center">
+                                <ImageIcon className="mr-2 h-4 w-4" /> AI Image Creator
+                            </SidebarGroupLabel>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="center">
+                            <p>Generate unique images from text prompts using AI.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                    <SidebarGroupContent>
+                        <ImageCreator />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
                    <SidebarGroup>
-                    <SidebarGroupLabel className="flex items-center">
-                      <CloudSunIcon className="mr-2 h-4 w-4" /> Weather
-                    </SidebarGroupLabel>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <SidebarGroupLabel className="flex items-center">
+                            <CloudSunIcon className="mr-2 h-4 w-4" /> Weather
+                            </SidebarGroupLabel>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="center">
+                            <p>Check the 7-day weather forecast and view radar information.</p>
+                        </TooltipContent>
+                    </Tooltip>
                     <SidebarGroupContent>
                       <WeatherForecast />
                     </SidebarGroupContent>
