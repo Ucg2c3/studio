@@ -70,9 +70,16 @@ export default function RootLayout({
                 </SidebarHeader>
                 <SidebarContent>
                   <SidebarGroup>
-                    <SidebarGroupLabel className="flex items-center">
-                      <SettingsIcon className="mr-2" /> Network Monitoring
-                    </SidebarGroupLabel>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarGroupLabel className="flex items-center">
+                          <SettingsIcon className="mr-2" /> Network Monitoring
+                        </SidebarGroupLabel>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" align="center">
+                        <p>Configure network monitoring settings, alerts, and ignored IPs.</p>
+                      </TooltipContent>
+                    </Tooltip>
                     <SidebarGroupContent>
                       <NetworkMonitoringSettings />
                     </SidebarGroupContent>
@@ -102,9 +109,16 @@ export default function RootLayout({
                     </SidebarGroupContent>
                   </SidebarGroup>
                   <SidebarGroup>
-                    <SidebarGroupLabel className="flex items-center">
-                      <NewspaperIcon className="mr-2 h-4 w-4" /> News
-                    </SidebarGroupLabel>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarGroupLabel className="flex items-center">
+                          <NewspaperIcon className="mr-2 h-4 w-4" /> News
+                        </SidebarGroupLabel>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" align="center">
+                        <p>Catch up on the latest top headlines.</p>
+                      </TooltipContent>
+                    </Tooltip>
                     <SidebarGroupContent>
                       <NewsFeed />
                     </SidebarGroupContent>
