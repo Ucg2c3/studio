@@ -4,7 +4,7 @@ import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon } from 'lucide-react';
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon, LogInIcon, PaletteIcon, SearchCodeIcon, UserCircle2, LayoutDashboardIcon } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
@@ -16,10 +16,11 @@ import { ImageCreator } from '@/components/sidebar/image-creator';
 import { BitcoinMinerStatus } from '@/components/sidebar/bitcoin-miner-status';
 import { BitcoinNetworkMonitor } from '@/components/sidebar/bitcoin-network-monitor';
 import { BitcoinWallet } from '@/components/sidebar/bitcoin-wallet';
+import { AuthSection } from '@/components/sidebar/auth-section';
+import { BuilderSection } from '@/components/sidebar/builder-section';
+import { AnalysisSection } from '@/components/sidebar/analysis-section';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-// Removed SheetTitle import as it's replaced by a div for this specific usage.
-// If SheetTitle is used elsewhere, it can remain, but for the SidebarHeader here, it's not appropriate for desktop.
 
 
 const geistSans = Geist({
@@ -47,7 +48,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TooltipProvider>
           <SidebarProvider>
-            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" style={{ '--header-height': '3.5rem' } as React.CSSProperties}>
               <div className="container flex h-14 items-center">
                 <SidebarTrigger asChild>
                   <Button variant="ghost" size="icon" className="md:hidden mr-2">
@@ -67,18 +68,82 @@ export default function RootLayout({
                   </TooltipContent>
                 </Tooltip>
                  <div className="ml-auto flex items-center space-x-2">
+                  {/* Placeholder for future user profile/settings dropdown */}
                   <SidebarTrigger className="hidden md:flex" />
                 </div>
-                {/* Future Nav items could go here */}
               </div>
             </header>
             <div className="flex flex-1">
               <Sidebar side="left" variant="sidebar" collapsible="icon">
                 <SidebarHeader>
-                  {/* Replaced SheetTitle with a div to avoid Dialog context errors on desktop */}
-                  <div className="text-lg font-semibold text-foreground text-center md:text-left">Settings Panel</div>
+                  <div className="text-lg font-semibold text-foreground text-center md:text-left p-2">Features</div>
                 </SidebarHeader>
                 <SidebarContent>
+                  <SidebarGroup>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarGroupLabel className="flex items-center">
+                          <UserCircle2 className="mr-2 h-4 w-4" /> Authentication
+                        </SidebarGroupLabel>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" align="center">
+                        <p>Sign in to access your dashboard and features.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <SidebarGroupContent>
+                      <AuthSection />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+
+                  <SidebarGroup>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarGroupLabel className="flex items-center">
+                          <LayoutDashboardIcon className="mr-2 h-4 w-4" /> App Prototyper
+                        </SidebarGroupLabel>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" align="center">
+                        <p>Generate Next.js application prototypes with AI.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    {/* Content for App Prototyper can be a link to the main page or a specific component */}
+                     <SidebarGroupContent>
+                        <p className="text-xs text-muted-foreground p-2">Main application generation tool.</p>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+
+                  <SidebarGroup>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarGroupLabel className="flex items-center">
+                          <PaletteIcon className="mr-2 h-4 w-4" /> Website Builder
+                        </SidebarGroupLabel>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" align="center">
+                        <p>Describe and generate website prototypes.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <SidebarGroupContent>
+                      <BuilderSection />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+
+                  <SidebarGroup>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarGroupLabel className="flex items-center">
+                          <SearchCodeIcon className="mr-2 h-4 w-4" /> Dev Analysis
+                        </SidebarGroupLabel>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" align="center">
+                        <p>Review app performance & quality insights (Lighthouse-like).</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <SidebarGroupContent>
+                      <AnalysisSection />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+
                   <SidebarGroup>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -216,11 +281,11 @@ export default function RootLayout({
                   </SidebarGroup>
                 </SidebarContent>
                 <SidebarFooter>
-                  {/* Footer content if any */}
+                  {/* Footer content could include a logout button or app version */}
                 </SidebarFooter>
               </Sidebar>
               <SidebarInset>
-                <main className="flex-1 p-4">
+                <main className="flex-1 p-4 md:p-6 lg:p-8 bg-muted/20">
                   {children}
                 </main>
               </SidebarInset>
