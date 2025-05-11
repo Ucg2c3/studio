@@ -1,9 +1,10 @@
+
 import * as React from 'react';
 import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon } from 'lucide-react';
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
@@ -17,7 +18,8 @@ import { BitcoinNetworkMonitor } from '@/components/sidebar/bitcoin-network-moni
 import { BitcoinWallet } from '@/components/sidebar/bitcoin-wallet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-// SheetTitle is removed as it's specifically for Dialogs/Sheets, and SidebarHeader on desktop isn't one.
+// Removed SheetTitle import as it's replaced by a div for this specific usage.
+// If SheetTitle is used elsewhere, it can remain, but for the SidebarHeader here, it's not appropriate for desktop.
 
 
 const geistSans = Geist({
@@ -73,7 +75,8 @@ export default function RootLayout({
             <div className="flex flex-1">
               <Sidebar side="left" variant="sidebar" collapsible="icon">
                 <SidebarHeader>
-                   <div className="text-lg font-semibold text-foreground text-center md:text-left">Settings Panel</div>
+                  {/* Replaced SheetTitle with a div to avoid Dialog context errors on desktop */}
+                  <div className="text-lg font-semibold text-foreground text-center md:text-left">Settings Panel</div>
                 </SidebarHeader>
                 <SidebarContent>
                   <SidebarGroup>
