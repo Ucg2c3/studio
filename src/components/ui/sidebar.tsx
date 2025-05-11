@@ -26,7 +26,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { DialogTitle } from "@/components/ui/dialog" // Import DialogTitle
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -218,8 +217,8 @@ const Sidebar = React.forwardRef<
             side={side}
           >
             <RadixSheetHeader className="p-4 border-b">
-               {/* Use DialogTitle here for accessibility as required by Radix Sheet (Dialog) */}
-              <DialogTitle className="sr-only">Mobile Menu</DialogTitle> 
+               {/* Use RadixSheetTitle here for accessibility as required by Radix Sheet (Dialog) */}
+              <RadixSheetTitle className="sr-only">Mobile Menu</RadixSheetTitle> 
               <RadixSheetTitle>Menu</RadixSheetTitle>
             </RadixSheetHeader>
             <div className="flex-1 overflow-y-auto">
@@ -785,3 +784,4 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
