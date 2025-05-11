@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -14,13 +15,16 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Wand2 } from 'lucide-react'; 
+import { Wand2, GlobeIcon, CheckCircle2Icon } from 'lucide-react'; 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const builderFormSchema = z.object({
   websiteDescription: z.string().min(30, {
     message: 'Description must be at least 30 characters long to provide enough detail.',
   }),
+  desiredDomain: z.string().optional(),
 });
 
 type BuilderFormValues = z.infer<typeof builderFormSchema>;
@@ -28,29 +32,55 @@ type BuilderFormValues = z.infer<typeof builderFormSchema>;
 export function BuilderForm() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [prototypeGenerated, setPrototypeGenerated] = React.useState(false);
+  const [domainRequested, setDomainRequested] = React.useState(false);
 
   const form = useForm<BuilderFormValues>({
     resolver: zodResolver(builderFormSchema),
     defaultValues: {
       websiteDescription: '',
+      desiredDomain: '',
     },
   });
 
   async function onSubmit(data: BuilderFormValues) {
     setIsLoading(true);
+    setPrototypeGenerated(false);
+    setDomainRequested(false);
+
     // Simulate AI processing for website generation
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    setIsLoading(false);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
     toast({
-      title: 'Website Build Initialized (Mock)',
-      description: `AI is now crafting a prototype for: "${data.websiteDescription.substring(0, 60)}...". This is a mock process.`,
+      title: 'Website Prototype Generated (Mock)',
+      description: `AI has crafted a prototype for: "${data.websiteDescription.substring(0, 50)}...". This is a mock process.`,
       variant: 'default'
     });
-    // In a real application, this would trigger an AI flow.
-    // This could involve calling a Genkit flow similar to generatePrototype,
-    // but tailored for website structures (HTML/CSS, or specific CMS/framework).
-    // form.reset(); // Optionally reset the form
+    setPrototypeGenerated(true);
+    setIsLoading(false);
   }
+
+  async function handleDomainRequest(data: BuilderFormValues) {
+    if (!data.desiredDomain || !data.desiredDomain.includes('.')) {
+        toast({
+            title: "Invalid Domain",
+            description: "Please enter a valid domain name (e.g., myawesome.site).",
+            variant: "destructive"
+        });
+        return;
+    }
+    setIsLoading(true);
+    // Simulate domain registration
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setDomainRequested(true);
+    toast({
+        title: "Domain Request Submitted (Mock)",
+        description: `Your request for domain "${data.desiredDomain}" has been submitted. This is a premium feature mock-up.`,
+        variant: "default"
+    });
+    setIsLoading(false);
+  }
+
 
   return (
     <Form {...form}>
@@ -72,9 +102,13 @@ export function BuilderForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isLoading} className="w-full py-3 text-base bg-accent hover:bg-accent/90 text-accent-foreground">
-          {isLoading ? (
-            'Generating Website...'
+        <Button type="submit" disabled={isLoading || prototypeGenerated} className="w-full py-3 text-base bg-accent hover:bg-accent/90 text-accent-foreground">
+          {isLoading && !prototypeGenerated ? (
+            'Generating Prototype...'
+          ) : prototypeGenerated ? (
+             <>
+              <CheckCircle2Icon className="mr-2 h-5 w-5" /> Prototype Generated!
+            </>
           ) : (
             <>
               <Wand2 className="mr-2 h-5 w-5" /> Generate Website Prototype
@@ -84,6 +118,55 @@ export function BuilderForm() {
          <p className="text-center text-xs text-muted-foreground pt-2">
           This Website Builder uses AI to generate a conceptual prototype. Full website generation is a complex process; this is a simplified demonstration.
         </p>
+
+        {prototypeGenerated && !domainRequested && (
+          <Card className="mt-8 bg-secondary/30 border-primary/30">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center"><GlobeIcon className="mr-2 h-6 w-6 text-primary"/>Get Your Custom Domain</CardTitle>
+              <CardDescription>
+                Publish your generated website with a custom domain. This is a premium feature (mock-up).
+                Enter your desired domain name below.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="desiredDomain"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">Desired Domain Name</FormLabel>
+                    <FormControl>
+                      <div className="flex gap-2">
+                        <Input 
+                            placeholder="e.g., myawesomeceramics.com" 
+                            {...field} 
+                            className="flex-grow"
+                            disabled={isLoading}
+                        />
+                        <Button 
+                            type="button" 
+                            onClick={form.handleSubmit(handleDomainRequest)} 
+                            disabled={isLoading}
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                        >
+                          {isLoading ? 'Requesting...' : 'Request Domain'}
+                        </Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+        )}
+         {domainRequested && (
+            <div className="mt-6 p-4 border border-accent/50 rounded-md bg-accent/10 text-center">
+                <CheckCircle2Icon className="h-8 w-8 text-accent mx-auto mb-2" />
+                <p className="font-semibold text-accent-foreground">Domain "{form.getValues("desiredDomain")}" Requested!</p>
+                <p className="text-sm text-muted-foreground">In a real application, this would start the domain registration and site publishing process.</p>
+            </div>
+        )}
       </form>
     </Form>
   );

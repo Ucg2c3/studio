@@ -4,7 +4,7 @@ import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon, LogInIcon, PaletteIcon, SearchCodeIcon, UserCircle2, LayoutDashboardIcon } from 'lucide-react';
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon, LogInIcon, PaletteIcon, SearchCodeIcon, UserCircle2, LayoutDashboardIcon, CreditCardIcon, BanknoteIcon, LandmarkIcon } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
@@ -19,6 +19,8 @@ import { BitcoinWallet } from '@/components/sidebar/bitcoin-wallet';
 import { AuthSection } from '@/components/sidebar/auth-section';
 import { BuilderSection } from '@/components/sidebar/builder-section';
 import { AnalysisSection } from '@/components/sidebar/analysis-section';
+import { BillingSection } from '@/components/sidebar/billing-section';
+import { WalletSection } from '@/components/sidebar/wallet-section';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
@@ -78,7 +80,7 @@ export default function RootLayout({
                 <SidebarHeader>
                   <div className="text-lg font-semibold text-foreground text-center md:text-left p-2">Features</div>
                 </SidebarHeader>
-                <SidebarContent>
+                <SidebarContent className="space-y-1"> {/* Reduced gap for denser sidebar */}
                   <SidebarGroup>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -106,7 +108,6 @@ export default function RootLayout({
                         <p>Generate Next.js application prototypes with AI.</p>
                       </TooltipContent>
                     </Tooltip>
-                    {/* Content for App Prototyper can be a link to the main page or a specific component */}
                      <SidebarGroupContent>
                         <p className="text-xs text-muted-foreground p-2">Main application generation tool.</p>
                     </SidebarGroupContent>
@@ -146,9 +147,42 @@ export default function RootLayout({
 
                   <SidebarGroup>
                     <Tooltip>
+                        <TooltipTrigger asChild>
+                            <SidebarGroupLabel className="flex items-center">
+                                <CreditCardIcon className="mr-2 h-4 w-4" /> Billing
+                            </SidebarGroupLabel>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="center">
+                            <p>Manage your subscription and payment methods.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                    <SidebarGroupContent>
+                        <BillingSection />
+                    </SidebarGroupContent>
+                   </SidebarGroup>
+
+                   <SidebarGroup>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <SidebarGroupLabel className="flex items-center">
+                                    <WalletIcon className="mr-2 h-4 w-4" /> Wallet &amp; Finance
+                                </SidebarGroupLabel>
+                            </TooltipTrigger>
+                            <TooltipContent side="right" align="center">
+                                <p>Manage bank accounts, virtual cards, and send currency.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <SidebarGroupContent>
+                            <WalletSection />
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+
+
+                  <SidebarGroup>
+                    <Tooltip>
                       <TooltipTrigger asChild>
                         <SidebarGroupLabel className="flex items-center">
-                          <SettingsIcon className="mr-2" /> Network Monitoring
+                          <SettingsIcon className="mr-2 h-4 w-4" /> Network Monitoring
                         </SidebarGroupLabel>
                       </TooltipTrigger>
                       <TooltipContent side="right" align="center">
@@ -163,7 +197,7 @@ export default function RootLayout({
                      <Tooltip>
                         <TooltipTrigger asChild>
                             <SidebarGroupLabel className="flex items-center">
-                            <ZapIcon className="mr-2" /> System Status
+                            <ZapIcon className="mr-2 h-4 w-4" /> System Status
                             </SidebarGroupLabel>
                         </TooltipTrigger>
                         <TooltipContent side="right" align="center">
@@ -178,7 +212,7 @@ export default function RootLayout({
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <SidebarGroupLabel className="flex items-center">
-                            <AnnoyedIcon className="mr-2" /> Ad Creator
+                            <AnnoyedIcon className="mr-2 h-4 w-4" /> Ad Creator
                             </SidebarGroupLabel>
                         </TooltipTrigger>
                         <TooltipContent side="right" align="center">
