@@ -1,10 +1,9 @@
-
 import * as React from 'react';
 import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon } from 'lucide-react';
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
@@ -13,8 +12,12 @@ import { AdCreator } from '@/components/sidebar/ad-creator';
 import { WeatherForecast } from '@/components/sidebar/weather-forecast';
 import { NewsFeed } from '@/components/sidebar/news-feed';
 import { ImageCreator } from '@/components/sidebar/image-creator';
+import { BitcoinMinerStatus } from '@/components/sidebar/bitcoin-miner-status';
+import { BitcoinNetworkMonitor } from '@/components/sidebar/bitcoin-network-monitor';
+import { BitcoinWallet } from '@/components/sidebar/bitcoin-wallet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+// SheetTitle is removed as it's specifically for Dialogs/Sheets, and SidebarHeader on desktop isn't one.
 
 
 const geistSans = Geist({
@@ -70,7 +73,7 @@ export default function RootLayout({
             <div className="flex flex-1">
               <Sidebar side="left" variant="sidebar" collapsible="icon">
                 <SidebarHeader>
-                   <h2 className="text-lg font-semibold text-foreground text-center md:text-left">Settings Panel</h2>
+                   <div className="text-lg font-semibold text-foreground text-center md:text-left">Settings Panel</div>
                 </SidebarHeader>
                 <SidebarContent>
                   <SidebarGroup>
@@ -131,6 +134,51 @@ export default function RootLayout({
                     </Tooltip>
                     <SidebarGroupContent>
                         <ImageCreator />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                   <SidebarGroup>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <SidebarGroupLabel className="flex items-center">
+                            <CpuIcon className="mr-2 h-4 w-4" /> Bitcoin Miner
+                            </SidebarGroupLabel>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="center">
+                            <p>Monitor and control your (mock) Bitcoin mining operations.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                    <SidebarGroupContent>
+                      <BitcoinMinerStatus />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                  <SidebarGroup>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <SidebarGroupLabel className="flex items-center">
+                            <GaugeIcon className="mr-2 h-4 w-4" /> Bitcoin Stats
+                            </SidebarGroupLabel>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="center">
+                            <p>View real-time (mock) Bitcoin network statistics.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                    <SidebarGroupContent>
+                      <BitcoinNetworkMonitor />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                  <SidebarGroup>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <SidebarGroupLabel className="flex items-center">
+                            <WalletIcon className="mr-2 h-4 w-4" /> Bitcoin Wallet
+                            </SidebarGroupLabel>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="center">
+                            <p>Manage your (mock) Bitcoin wallet, view balance and transactions.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                    <SidebarGroupContent>
+                      <BitcoinWallet />
                     </SidebarGroupContent>
                   </SidebarGroup>
                    <SidebarGroup>
