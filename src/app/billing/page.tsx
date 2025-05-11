@@ -1,7 +1,8 @@
 
 import { SubscriptionForm } from '@/components/billing/subscription-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CreditCardIcon, ShieldCheckIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CreditCardIcon, ShieldCheckIcon, LockIcon, SignalIcon, WifiIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -22,8 +23,8 @@ export default function BillingPage() {
         </p>
       </header>
       
-      <div className="grid md:grid-cols-2 gap-8 items-start">
-        <Card className="shadow-xl rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+        <Card className="shadow-xl rounded-lg lg:col-span-1">
           <CardHeader>
             <CardTitle className="text-2xl">CloudGenius Pro Plan</CardTitle>
             <CardDescription>
@@ -39,7 +40,30 @@ export default function BillingPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-xl rounded-lg">
+        <Card className="shadow-xl rounded-lg lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center">
+              <SignalIcon className="h-7 w-7 mr-2 text-primary" /> 5G Network Add-on
+            </CardTitle>
+            <CardDescription>
+              Boost your connectivity with premium 5G speeds and enhanced WiFi capabilities for all your generated applications.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="mb-6 p-4 bg-secondary/50 rounded-lg">
+              <p className="text-3xl font-bold text-primary">$9.98 <span className="text-base font-normal text-muted-foreground">/ month</span></p>
+              <p className="text-sm text-muted-foreground mt-1">Requires Pro Plan. Billed monthly.</p>
+            </div>
+            <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground py-3">
+              <WifiIcon className="mr-2 h-4 w-4" /> Add 5G & WiFi Boost (Mock)
+            </Button>
+            <p className="text-xs text-muted-foreground text-center pt-4">
+              Experience unparalleled speed and reliability for your critical cloud connections. This is a simulated add-on.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-xl rounded-lg lg:col-span-1">
           <CardHeader>
             <CardTitle className="text-2xl flex items-center">
               <ShieldCheckIcon className="h-7 w-7 mr-2 text-accent" /> Secure Payments
