@@ -4,7 +4,7 @@ import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon, LogInIcon, PaletteIcon, SearchCodeIcon, UserCircle2, LayoutDashboardIcon, CreditCardIcon, BanknoteIcon, LandmarkIcon } from 'lucide-react';
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon, LogInIcon, PaletteIcon, SearchCodeIcon, UserCircle2, LayoutDashboardIcon, CreditCardIcon, BanknoteIcon, LandmarkIcon, UserPlusIcon } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
@@ -21,6 +21,7 @@ import { BuilderSection } from '@/components/sidebar/builder-section';
 import { AnalysisSection } from '@/components/sidebar/analysis-section';
 import { BillingSection } from '@/components/sidebar/billing-section';
 import { WalletSection } from '@/components/sidebar/wallet-section';
+import { DashboardSection } from '@/components/sidebar/dashboard-section';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
@@ -89,7 +90,7 @@ export default function RootLayout({
                         </SidebarGroupLabel>
                       </TooltipTrigger>
                       <TooltipContent side="right" align="center">
-                        <p>Sign in to access your dashboard and features.</p>
+                        <p>Sign in or register to access your dashboard and features.</p>
                       </TooltipContent>
                     </Tooltip>
                     <SidebarGroupContent>
@@ -100,8 +101,24 @@ export default function RootLayout({
                   <SidebarGroup>
                     <Tooltip>
                       <TooltipTrigger asChild>
+                         <SidebarGroupLabel className="flex items-center">
+                          <LayoutDashboardIcon className="mr-2 h-4 w-4" /> Dashboard
+                        </SidebarGroupLabel>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" align="center">
+                        <p>View your activity summary and simulated earnings.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                     <SidebarGroupContent>
+                        <DashboardSection />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+
+                  <SidebarGroup>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <SidebarGroupLabel className="flex items-center">
-                          <LayoutDashboardIcon className="mr-2 h-4 w-4" /> App Prototyper
+                          <ZapIcon className="mr-2 h-4 w-4" /> App Prototyper
                         </SidebarGroupLabel>
                       </TooltipTrigger>
                       <TooltipContent side="right" align="center">
@@ -319,7 +336,7 @@ export default function RootLayout({
                 </SidebarFooter>
               </Sidebar>
               <SidebarInset>
-                <main className="flex-1 p-4 md:p-6 lg:p-8 bg-muted/20">
+                <main className="flex-1 p-4 md:p-6 lg:p-8 bg-muted/20 min-h-[calc(100vh-var(--header-height,4rem)-1px)]">
                   {children}
                 </main>
               </SidebarInset>
