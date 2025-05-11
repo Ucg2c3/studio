@@ -1,7 +1,9 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  reactStrictMode: true, // Ensure React Strict Mode is enabled
+  poweredByHeader: false, // Disable the X-Powered-By header for security
   typescript: {
     ignoreBuildErrors: true,
   },
