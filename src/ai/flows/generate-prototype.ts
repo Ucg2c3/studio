@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -30,25 +31,35 @@ const prompt = ai.definePrompt({
   name: 'generatePrototypePrompt',
   input: { schema: GeneratePrototypeInputSchema },
   output: { schema: GeneratePrototypeOutputSchema },
-  prompt: `You are an AI that can generate Next.js prototype applications based on user descriptions.
+  prompt: `You are an AI that can generate Next.js prototype application files based on user descriptions.
 
-Based on the following description, generate a Next.js application with a basic layout and functionality:
+Based on the following description, generate the content for a single Next.js App Router file (e.g., page.tsx or a component.tsx):
 
 Description: {{{appDescription}}}
 
-When generating the prototype, adhere to the following style guidelines:
-- Primary color: Deep sky blue (#007BFF) for a modern and clean feel.
-- Secondary color: Light gray (#F8F9FA) for backgrounds and subtle contrasts.
-- Accent color: Emerald green (#28A745) for success states and primary actions.
-- Typography: Use clean and modern typography for readability and a professional look.
-- Layout: Implement a grid-based layout for a structured and organized presentation.
-- Iconography: Use simple and intuitive icons to represent different components and actions. Prefer Lucide React icons if appropriate for Next.js/React.
+The generated 'prototypeCode' for this single file should be of **production quality**, complete, and runnable. It must strictly follow these guidelines:
+- **Next.js App Router:** Adhere to App Router conventions.
+- **Server Components:** Utilize Server Components by default where appropriate.
+- **TypeScript:** Write clean, type-safe TypeScript code.
+- **ShadCN UI & Tailwind CSS:** Employ ShadCN UI components (from /components/ui) extensively for a polished and professional interface. Use Tailwind CSS for all styling, adhering to the specified theme colors. Do not use inline styles or other CSS methods.
+- **Lucide Icons:** Use icons from 'lucide-react' where appropriate.
+- **Images:** Use the 'next/image' component for all images. For placeholders, use 'https://placehold.co/<width>x<height>.png' (e.g., https://placehold.co/600x400.png) and always include a 'data-ai-hint' attribute with one or two relevant keywords for image search (e.g., data-ai-hint="abstract landscape").
+- **Accessibility:** Implement ARIA attributes and ensure semantic HTML for good accessibility.
+- **Error Handling:** For pages, if applicable, consider where error.js boundaries might be used, though you are only generating one file.
+- **No Comments:** Do not add any comments to the generated code.
 
-Ensure the generated code is complete and ready to be exported as a Next.js project. This includes generating full, runnable Next.js files (e.g., content for page.tsx or component.tsx files, suitable for the App Router structure).
-The prototype should include necessary Tailwind CSS classes for styling according to the guidelines above.
-Also, include a detailed description of the generated layout, components, and features.
-If the appDescription mentions security, emphasize security features in the user interface, such as visual cues for encryption (e.g., lock icons), secure connections (e.g., shield icons, indicators for HTTPS), and network isolation. If a security report is requested, include a dedicated section or card in the UI for displaying this report.
-The generated 'prototypeCode' should be the content of a single React component or page file (e.g., page.tsx). Do not try to generate multiple files or a full project structure in 'prototypeCode'.
+When generating the prototype, adhere to the following style guidelines (these are theme variables in globals.css, so use Tailwind classes that respect them, e.g. bg-primary, text-accent):
+- Primary color: Deep sky blue (hsl(211 100% 50%)) for interactive elements.
+- Secondary color: Light gray (hsl(210 17% 95%)) for backgrounds and subtle contrasts.
+- Accent color: Emerald green (hsl(145 63% 42%)) for primary actions or highlights.
+- Typography: Use clean and modern typography (Tailwind's default sans-serif font is appropriate).
+- Layout: If the description implies a page, implement a responsive grid-based or flexbox layout for structured presentation.
+
+The 'prototypeCode' output MUST be the content of a single React component or page file (e.g., a page.tsx or component.tsx). Do NOT generate multiple files, a full project structure, or helper utilities in 'prototypeCode'.
+
+Also, provide a 'layoutDescription' detailing the generated layout, key components used, and notable features implemented in the code.
+
+If the appDescription mentions security, emphasize security features in the user interface, such as visual cues for encryption (e.g., lock icons using Lucide), secure connections (e.g., shield icons, indicators for HTTPS), and network isolation concepts if they can be visually represented. If a security report is requested, include a dedicated section or card in the UI for displaying this report, styled appropriately.
 `,
 });
 
