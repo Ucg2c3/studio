@@ -8,6 +8,7 @@ import { AddBankAccountForm } from './add-bank-account-form';
 import { SendCurrencyForm } from './send-currency-form';
 import { VirtualCardDisplay } from './virtual-card-display';
 import { LandmarkIcon, CreditCardIcon, SendIcon, ListChecksIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button'; // Added import
 
 interface BankAccount {
   id: string;
