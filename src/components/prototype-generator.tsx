@@ -1,8 +1,9 @@
+
 'use client';
 
 import * as React from 'react';
-import { useActionState } from 'react'; // Updated import
-import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom'; // Still needed for SubmitButton
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -46,7 +47,8 @@ export function PrototypeGenerator() {
   const [copied, setCopied] = React.useState(false);
 
   // useActionState hook manages state updates from server actions
-  const [state, formAction] = useActionState(generateAppPrototypeAction, { // Updated usage
+  // Destructure isPending (the third item) from useActionState
+  const [actionState, formAction, isActionPending] = useActionState(generateAppPrototypeAction, {
     message: '',
     data: undefined,
     error: undefined,
@@ -61,30 +63,29 @@ export function PrototypeGenerator() {
   });
 
   React.useEffect(() => {
-    if (state.message && !state.error) {
+    // Use actionState for messages and errors
+    if (actionState.message && !actionState.error) {
       toast({
         title: "Success!",
-        description: state.message,
-        variant: "default", // Use default for success with accent button
+        description: actionState.message,
+        variant: "default",
       });
-      // Optionally reset form on success
-      // form.reset();
-    } else if (state.error) {
+    } else if (actionState.error) {
       toast({
         title: 'Error',
-        description: state.error,
+        description: actionState.error,
         variant: 'destructive',
       });
     }
-  }, [state, toast]);
+  }, [actionState, toast]);
 
   const handleCopy = () => {
-    if (state.data?.prototypeCode) {
-      navigator.clipboard.writeText(state.data.prototypeCode)
+    if (actionState.data?.prototypeCode) {
+      navigator.clipboard.writeText(actionState.data.prototypeCode)
         .then(() => {
           setCopied(true);
           toast({ description: 'Code copied to clipboard!' });
-          setTimeout(() => setCopied(false), 2000); // Reset icon after 2 seconds
+          setTimeout(() => setCopied(false), 2000);
         })
         .catch(err => {
           console.error('Failed to copy: ', err);
@@ -94,22 +95,16 @@ export function PrototypeGenerator() {
   };
 
   const handleExport = () => {
-      if (state.data?.prototypeCode) {
-          // Placeholder for export functionality
-          // In a real app, this would trigger a download or push to a repository
-          // For now, we just show a toast
+      if (actionState.data?.prototypeCode) {
            toast({
             title: "Export Started",
             description: "Generating Next.js project files... (This is a placeholder)",
           });
-
-          // Simulate download (replace with actual file generation and download logic)
            try {
-                const blob = new Blob([state.data.prototypeCode], { type: 'text/plain;charset=utf-8' });
+                const blob = new Blob([actionState.data.prototypeCode], { type: 'text/plain;charset=utf-8' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                // Suggest a filename - might need adjustment based on actual content
-                link.download = 'prototype-app.tsx'; // Example filename
+                link.download = 'prototype-app.tsx';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -122,7 +117,6 @@ export function PrototypeGenerator() {
                     variant: "destructive",
                 });
            }
-
       } else {
           toast({
               description: "No prototype code available to export.",
@@ -130,7 +124,6 @@ export function PrototypeGenerator() {
           });
       }
   };
-
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -143,7 +136,6 @@ export function PrototypeGenerator() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* We pass formAction to the <form> element */}
           <Form {...form}>
             <form action={formAction} className="space-y-6">
               <FormField
@@ -184,7 +176,6 @@ The prototype should demonstrate a user interface where users can:
                   </FormItem>
                 )}
               />
-              {/* SubmitButton uses useFormStatus to react to form submission state */}
               <SubmitButton />
             </form>
           </Form>
@@ -199,18 +190,19 @@ The prototype should demonstrate a user interface where users can:
           </CardDescription>
         </CardHeader>
         <CardContent>
-            {useFormStatus().pending ? (
+            {/* Use isActionPending from useActionState for skeleton display */}
+            {isActionPending ? (
                 <div className="space-y-4">
                     <Skeleton className="h-4 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
                     <Skeleton className="h-32 w-full" />
                     <Skeleton className="h-10 w-24" />
                 </div>
-            ) : state.data ? (
+            ) : actionState.data ? ( // Use actionState.data to check for results
              <div className="space-y-4">
                 <div>
                     <h3 className="font-semibold mb-2">Layout Description:</h3>
-                    <p className="text-sm text-muted-foreground">{state.data.layoutDescription}</p>
+                    <p className="text-sm text-muted-foreground">{actionState.data.layoutDescription}</p>
                 </div>
                 <div className="relative">
                     <h3 className="font-semibold mb-2">Prototype Code:</h3>
@@ -224,13 +216,12 @@ The prototype should demonstrate a user interface where users can:
                         {copied ? <Check className="h-4 w-4 text-accent" /> : <Copy className="h-4 w-4" />}
                     </Button>
                     <pre className="bg-secondary p-4 rounded-md overflow-auto text-sm max-h-[400px]">
-                        <code>{state.data.prototypeCode}</code>
+                        <code>{actionState.data.prototypeCode}</code>
                     </pre>
                 </div>
                  <Button onClick={handleExport} variant="outline" className="w-full md:w-auto">
                     Export as Next.js Project
                 </Button>
-
             </div>
            ) : (
              <p className="text-muted-foreground text-center py-10">
