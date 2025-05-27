@@ -4,7 +4,7 @@ import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon, LogInIcon, PaletteIcon, SearchCodeIcon, UserCircle2, LayoutDashboardIcon, CreditCardIcon, BanknoteIcon, LandmarkIcon, UserPlusIcon } from 'lucide-react';
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon, LogInIcon, PaletteIcon, SearchCodeIcon, UserCircle2, LayoutDashboardIcon, CreditCardIcon, BanknoteIcon, LandmarkIcon, UserPlusIcon, HomeIcon } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
@@ -18,6 +18,7 @@ import { BitcoinNetworkMonitor } from '@/components/sidebar/bitcoin-network-moni
 import { BitcoinWallet } from '@/components/sidebar/bitcoin-wallet';
 import { AuthSection } from '@/components/sidebar/auth-section';
 import { BuilderSection } from '@/components/sidebar/builder-section';
+import { HomeSection } from '@/components/sidebar/home-section';
 import { AnalysisSection } from '@/components/sidebar/analysis-section';
 import { BillingSection } from '@/components/sidebar/billing-section';
 import { WalletSection } from '@/components/sidebar/wallet-section';
@@ -102,6 +103,22 @@ export default function RootLayout({
                     <Tooltip>
                       <TooltipTrigger asChild>
                          <SidebarGroupLabel className="flex items-center">
+                          <HomeIcon className="mr-2 h-4 w-4" /> Home
+                        </SidebarGroupLabel>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" align="center">
+                        <p>Return to the main application page.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                     <SidebarGroupContent>
+                        <HomeSection />
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+
+                  <SidebarGroup>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                         <SidebarGroupLabel className="flex items-center">
                           <LayoutDashboardIcon className="mr-2 h-4 w-4" /> Dashboard
                         </SidebarGroupLabel>
                       </TooltipTrigger>
@@ -126,7 +143,7 @@ export default function RootLayout({
                       </TooltipContent>
                     </Tooltip>
                      <SidebarGroupContent>
-                        <p className="text-xs text-muted-foreground p-2">Main application generation tool.</p>
+                        <p className="text-xs text-muted-foreground p-2">Main application generation tool (homepage).</p>
                     </SidebarGroupContent>
                   </SidebarGroup>
 
