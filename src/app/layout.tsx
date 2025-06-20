@@ -4,7 +4,7 @@ import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon, LogInIcon, PaletteIcon, SearchCodeIcon, UserCircle2, LayoutDashboardIcon, CreditCardIcon, BanknoteIcon, LandmarkIcon, UserPlusIcon, HomeIcon } from 'lucide-react';
+import {CloudIcon, SettingsIcon, ZapIcon, AnnoyedIcon, PanelLeft, CloudSunIcon, NewspaperIcon, LockIcon, ImageIcon, CpuIcon, GaugeIcon, WalletIcon, Settings2Icon, LogInIcon, PaletteIcon, SearchCodeIcon, UserCircle2, LayoutDashboardIcon, CreditCardIcon, BanknoteIcon, LandmarkIcon, UserPlusIcon, HomeIcon, TriangleIcon } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { NetworkMonitoringSettings } from '@/components/sidebar/network-monitoring-settings';
@@ -135,7 +135,7 @@ export default function RootLayout({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <SidebarGroupLabel className="flex items-center">
-                          <ZapIcon className="mr-2 h-4 w-4" /> App Prototyper
+                          <TriangleIcon className="mr-2 h-4 w-4" /> App Prototyper
                         </SidebarGroupLabel>
                       </TooltipTrigger>
                       <TooltipContent side="right" align="center">
