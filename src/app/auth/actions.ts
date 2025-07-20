@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import { cookies } from 'next/headers';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithCustomToken } from 'firebase/auth';
 import { admin, getFirebaseAdminApp } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 
@@ -31,8 +31,9 @@ export async function loginAction(prevState: any, formData: FormData) {
     
     cookies().set('session', idToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       maxAge: expiresIn,
+      path: '/',
     });
     
     revalidatePath('/');
@@ -60,12 +61,14 @@ const registerFormSchema = z.object({
   fullName: z.string().min(3, { message: 'Full name must be at least 3 characters.'}),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
-}).refine(data => data.password.length > 0, {
-  message: "Password cannot be empty.",
-  path: ["password"],
+  confirmPassword: z.string()
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords do not match.",
+  path: ["confirmPassword"],
 });
 
 export async function registerAction(prevState: any, formData: FormData) {
+  getFirebaseAdminApp();
   const validatedFields = registerFormSchema.safeParse(Object.fromEntries(formData));
 
   if (!validatedFields.success) {
@@ -83,9 +86,23 @@ export async function registerAction(prevState: any, formData: FormData) {
       displayName: fullName,
     });
 
-    // You can perform additional actions here, like creating a user profile in Firestore.
-    // For now, we'll just return success.
+    // Automatically sign the user in by creating a session cookie
+    const customToken = await admin.auth().createCustomToken(userRecord.uid);
+    
+    // Now sign in with the custom token on the client-side auth instance to get an ID token
+    const auth = getAuth(getFirebaseAdminApp());
+    const userCredential = await signInWithCustomToken(auth, customToken);
+    const idToken = await userCredential.user.getIdToken();
+    const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
 
+    cookies().set('session', idToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: expiresIn,
+      path: '/',
+    });
+
+    revalidatePath('/');
     return { success: true, message: `Welcome, ${fullName}! Your account has been created.` };
   } catch (error: any) {
     console.error("Registration Error:", error);
@@ -96,7 +113,7 @@ export async function registerAction(prevState: any, formData: FormData) {
                 errorMessage = 'This email address is already in use.';
                 break;
             case 'auth/invalid-password':
-                errorMessage = 'The password must be at least 6 characters long.';
+                errorMessage = 'The password must be at least 8 characters long.';
                 break;
             default:
                 errorMessage = 'Failed to register. Please try again.';

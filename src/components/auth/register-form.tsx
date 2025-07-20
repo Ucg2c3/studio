@@ -34,9 +34,9 @@ export function RegisterForm() {
     if (state?.success) {
       toast({
         title: 'Registration Successful',
-        description: state.message || 'You can now sign in.',
+        description: state.message || 'You are now logged in.',
       });
-      router.push('/login');
+      router.push('/dashboard'); // Redirect to dashboard since user is now logged in
     } else if (state?.error) {
        const errorMessages = Object.values(state.error).flat().join(' ');
       toast({
@@ -71,7 +71,7 @@ export function RegisterForm() {
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input id="password" name="password" type="password" placeholder="••••••••" required className="pl-10" />
         </div>
-        {state?.error?.password && <p className="text-sm font-medium text-destructive">{state.error.password}</p>}
+        {state?.error?.password && <p className="text-sm font-medium text-destructive">{state.error.password[0]}</p>}
       </div>
       <div className="space-y-2">
         <label htmlFor="confirmPassword">Confirm Password</label>
@@ -79,7 +79,7 @@ export function RegisterForm() {
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" required className="pl-10" />
         </div>
-         {state?.error?.confirmPassword && <p className="text-sm font-medium text-destructive">{state.error.confirmPassword}</p>}
+         {state?.error?.confirmPassword && <p className="text-sm font-medium text-destructive">{state.error.confirmPassword[0]}</p>}
       </div>
       <SubmitButton />
       {state?.error?.form && <p className="text-sm font-medium text-destructive text-center">{state.error.form}</p>}
