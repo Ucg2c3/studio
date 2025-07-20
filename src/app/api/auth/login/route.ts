@@ -6,6 +6,7 @@ export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
+    getFirebaseAdminApp(); // Ensure firebase admin is initialized
     const body = await request.json();
     const idToken = body.idToken;
 
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'ID token is required.' }, { status: 400 });
     }
     
-    const auth = adminAuth(); // Ensure firebase admin is initialized and get auth instance
+    const auth = adminAuth(); // get auth instance
     const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
     const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
 

@@ -1,10 +1,25 @@
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { adminAuth, getFirebaseAdminApp } from '@/lib/firebase-admin';
+import { cookies } from 'next/headers';
+
+async function checkAuth(request: NextRequest): Promise<boolean> {
+  const sessionCookie = cookies().get('session')?.value;
+  if (!sessionCookie) {
+    return false;
+  }
+  try {
+    getFirebaseAdminApp(); // Ensure admin app is initialized
+    await adminAuth().verifySessionCookie(sessionCookie, true);
+    return true;
+  } catch (error) {
+    // Session cookie is invalid.
+    return false;
+  }
+}
 
 export async function middleware(request: NextRequest) {
-    const sessionCookie = request.cookies.get('session');
-    const isLoggedIn = !!sessionCookie?.value;
-
+    const isLoggedIn = await checkAuth(request);
     const { pathname } = request.nextUrl;
 
     const isProtectedRoute = ['/dashboard', '/billing', '/wallet', '/analysis', '/builder'].some(path => pathname.startsWith(path));

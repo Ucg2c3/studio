@@ -54,7 +54,7 @@ export function LoginForm() {
           description: 'Welcome back!',
         });
         router.push('/dashboard');
-        router.refresh(); // This ensures the new cookie is picked up by the server
+        router.refresh(); // This ensures the new cookie is picked up by the server and middleware re-evaluates
       } else {
         const data = await response.json();
         throw new Error(data.error || 'Failed to create session.');
