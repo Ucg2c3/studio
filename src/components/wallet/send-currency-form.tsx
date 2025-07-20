@@ -27,9 +27,13 @@ const sendCurrencyFormSchema = z.object({
   note: z.string().optional(),
 });
 
-type SendCurrencyFormValues = z.infer<typeof sendCurrencyFormSchema>;
+export type SendCurrencyFormValues = z.infer<typeof sendCurrencyFormSchema>;
 
-export function SendCurrencyForm() {
+interface SendCurrencyFormProps {
+  onSendCurrency: (data: SendCurrencyFormValues) => void;
+}
+
+export function SendCurrencyForm({ onSendCurrency }: SendCurrencyFormProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -37,18 +41,21 @@ export function SendCurrencyForm() {
     resolver: zodResolver(sendCurrencyFormSchema),
     defaultValues: {
       recipient: '',
-      amount: undefined, // Use undefined for number input to allow placeholder
+      amount: undefined, 
       note: '',
     },
   });
 
   async function onSubmit(data: SendCurrencyFormValues) {
     setIsLoading(true);
-    // Simulate API call for sending currency
+    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1800));
     setIsLoading(false);
+    
+    onSendCurrency(data);
+
     toast({
-      title: 'Currency Sent (Mock)',
+      title: 'Currency Sent',
       description: `Successfully sent ${data.amount} ${data.currency} to ${data.recipient}.`,
       variant: 'default'
     });
@@ -107,7 +114,7 @@ export function SendCurrencyForm() {
                     <SelectItem value="USD">USD</SelectItem>
                     <SelectItem value="EUR">EUR</SelectItem>
                     <SelectItem value="GBP">GBP</SelectItem>
-                    <SelectItem value="BTC">BTC (Mock)</SelectItem>
+                    <SelectItem value="BTC">BTC</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

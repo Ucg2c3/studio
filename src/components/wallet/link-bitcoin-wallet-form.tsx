@@ -22,7 +22,7 @@ import { Checkbox } from '../ui/checkbox';
 const bitcoinWalletFormSchema = z.object({
   walletName: z.string().min(3, { message: 'Wallet name must be at least 3 characters.' }),
   walletAddress: z.string().regex(/^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^bc1[ac-hj-np-z02-9]{11,71}$/i, { 
-    message: 'Enter a valid Bitcoin address (Legacy, SegWit, or Taproot - mock validation).',
+    message: 'Enter a valid Bitcoin address (Legacy or SegWit).',
   }),
   isPrimary: z.boolean().default(false),
 });
@@ -48,12 +48,12 @@ export function LinkBitcoinWalletForm({ onBitcoinWalletLinked }: LinkBitcoinWall
 
   async function onSubmit(data: BitcoinWalletFormValues) {
     setIsLoading(true);
-    // Simulate API call for linking Bitcoin wallet
+    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsLoading(false);
     
     const newWallet = {
-      id: `btc-${Math.random().toString(36).substring(7)}`, // mock id
+      id: `btc-${Date.now()}`,
       walletName: data.walletName,
       walletAddress: data.walletAddress,
       isPrimary: data.isPrimary,
@@ -61,7 +61,7 @@ export function LinkBitcoinWalletForm({ onBitcoinWalletLinked }: LinkBitcoinWall
     onBitcoinWalletLinked(newWallet);
 
     toast({
-      title: 'Bitcoin Wallet Linked (Mock)',
+      title: 'Bitcoin Wallet Linked',
       description: `Successfully linked ${data.walletName}.`,
       variant: 'default'
     });

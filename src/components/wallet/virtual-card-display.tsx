@@ -8,7 +8,11 @@ import { useToast } from '@/hooks/use-toast';
 import { EyeIcon, EyeOffIcon, CopyIcon, RefreshCwIcon, ShieldCheckIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export function VirtualCardDisplay() {
+interface VirtualCardDisplayProps {
+  onNewCard: () => void;
+}
+
+export function VirtualCardDisplay({ onNewCard }: VirtualCardDisplayProps) {
   const { toast } = useToast();
   const [cardDetails, setCardDetails] = React.useState({
     number: '•••• •••• •••• 1234',
@@ -68,7 +72,8 @@ export function VirtualCardDisplay() {
       cvv: '•••',
     });
     setIsGenerating(false);
-    toast({ title: 'New Virtual Card Generated (Mock)', description: 'Your new virtual card is ready. Remember to reveal details to use it.' });
+    onNewCard();
+    toast({ title: 'New Virtual Card Generated', description: 'Your new virtual card is ready. Remember to reveal details to use it.' });
   };
 
   return (
