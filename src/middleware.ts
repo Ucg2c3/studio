@@ -2,6 +2,9 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getFirebaseAdminApp, admin } from '@/lib/firebase-admin';
 
+// This is the crucial change: force the middleware to run on the Node.js runtime.
+export const runtime = 'nodejs';
+
 // Initialize the admin app
 getFirebaseAdminApp();
 
