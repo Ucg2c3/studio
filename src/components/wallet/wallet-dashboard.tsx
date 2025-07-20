@@ -112,11 +112,13 @@ export function WalletDashboard() {
               <h3 className="text-lg font-semibold mb-3 flex items-center"><ListChecksIcon className="mr-2 h-5 w-5 text-primary"/>Linked Bitcoin Wallets</h3>
               {linkedBitcoinWallets.length > 0 ? (
                 <ul className="space-y-3">
-                  {linkedBitcoinWallets.map(wallet => (
+                  {linkedBitcoinWallets.map((wallet) => (
                     <li key={wallet.id} className="flex justify-between items-center p-3 border rounded-md bg-secondary/30">
                       <div>
                         <p className="font-medium text-foreground">{wallet.walletName}</p>
-                        <p className="text-xs text-muted-foreground truncate max-w-xs md:max-w-sm" title={wallet.walletAddress}>{wallet.walletAddress}</p>
+                        <p className="text-xs text-muted-foreground truncate max-w-xs md:max-w-sm" title={wallet.walletAddress}>
+                          {wallet.walletAddress}
+                        </p>
                         {wallet.isPrimary && <p className="text-xs text-accent font-semibold">Primary Wallet</p>}
                       </div>
                       <Button variant="outline" size="sm" className="text-xs">Manage</Button>
