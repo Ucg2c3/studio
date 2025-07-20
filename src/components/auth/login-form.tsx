@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { LogInIcon, Mail, Lock } from 'lucide-react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { getFirebaseAuth } from '@/lib/firebase'; // Import the new function
+import { useFirebase } from '@/lib/firebase-client';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -29,12 +29,17 @@ function SubmitButton() {
 
 export function LoginForm() {
   const router = useRouter();
+  const { auth } = useFirebase();
   const { toast } = useToast();
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!auth) {
+        toast({ title: 'Auth service not available', description: 'Please try again later.', variant: 'destructive'});
+        return;
+    }
     setLoading(true);
     setError(null);
     
@@ -47,7 +52,6 @@ export function LoginForm() {
         throw new Error("Email and password are required.");
       }
       
-      const auth = getFirebaseAuth();
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
 
@@ -115,7 +119,7 @@ export function LoginForm() {
           <Input id="password" name="password" type="password" placeholder="••••••••" required className="pl-10" />
         </div>
       </div>
-      <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+      <Button type="submit" disabled={loading || !auth} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
         {loading ? 'Signing In...' : (
           <>
             <LogInIcon className="mr-2 h-4 w-4" /> Sign In

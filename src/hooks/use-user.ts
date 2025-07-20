@@ -2,7 +2,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, type User } from 'firebase/auth';
-import { getFirebaseAuth } from '@/lib/firebase'; // Ensure you have firebase client initialized
+import { useFirebase } from '@/lib/firebase-client';
 
 interface AuthUser {
   uid: string;
@@ -12,11 +12,15 @@ interface AuthUser {
 }
 
 export function useUser() {
+  const { auth } = useFirebase();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getFirebaseAuth();
+    if (!auth) {
+        setLoading(false);
+        return;
+    }
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser: User | null) => {
       if (firebaseUser) {
         setUser({
@@ -32,7 +36,7 @@ export function useUser() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
   return { user, loading };
 }
