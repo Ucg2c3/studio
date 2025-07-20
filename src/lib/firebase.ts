@@ -11,12 +11,20 @@ const firebaseConfig: FirebaseOptions = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase for Client-side
-if (!firebaseConfig.apiKey) {
+// Initialize Firebase for Client-side, and only on the client-side
+let app;
+let auth;
+
+if (typeof window !== 'undefined' && !getApps().length) {
+  if (!firebaseConfig.apiKey) {
     throw new Error('NEXT_PUBLIC_FIREBASE_API_KEY is not set in .env');
+  }
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+} else if (typeof window !== 'undefined') {
+  app = getApp();
+  auth = getAuth(app);
 }
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
 
 export { app, auth };
