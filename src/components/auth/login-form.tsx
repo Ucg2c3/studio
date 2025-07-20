@@ -33,13 +33,20 @@ export function LoginForm() {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
-  const handleLogin = async (formData: FormData) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setLoading(true);
     setError(null);
+    
+    const formData = new FormData(event.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
     try {
+      if (!email || !password) {
+        throw new Error("Email and password are required.");
+      }
+      
       const auth = getAuth(app);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
@@ -72,6 +79,7 @@ export function LoginForm() {
           case 'auth/invalid-credential':
           case 'auth/wrong-password':
           case 'auth/user-not-found':
+          case 'auth/invalid-email':
             errorMessage = 'Invalid email or password. Please try again.';
             break;
           default:
@@ -92,7 +100,7 @@ export function LoginForm() {
   };
 
   return (
-    <form action={handleLogin} className="space-y-6">
+    <form onSubmit={handleLogin} className="space-y-6">
       <div className="space-y-2">
         <label htmlFor="email" className="text-sm font-medium">Email Address</label>
         <div className="relative">
@@ -107,7 +115,13 @@ export function LoginForm() {
           <Input id="password" name="password" type="password" placeholder="••••••••" required className="pl-10" />
         </div>
       </div>
-      <SubmitButton />
+      <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+        {loading ? 'Signing In...' : (
+          <>
+            <LogInIcon className="mr-2 h-4 w-4" /> Sign In
+          </>
+        )}
+      </Button>
       {error && <p className="text-sm font-medium text-destructive text-center">{error}</p>}
     </form>
   );

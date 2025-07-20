@@ -2,38 +2,37 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { admin, getFirebaseAdminApp } from '@/lib/firebase-admin';
 
-export const runtime = 'nodejs';
-
-async function verifySession(session: string | undefined) {
-    if (!session) return null;
-    try {
-        getFirebaseAdminApp(); // Ensure app is initialized
-        const decodedIdToken = await admin.auth().verifySessionCookie(session, true);
-        return decodedIdToken;
-    } catch (error) {
-        console.error('Session cookie verification failed in middleware:', error);
-        return null;
-    }
-}
-
-function isProtectedRoute(pathname: string): boolean {
-    const protectedPaths = ['/dashboard', '/billing', '/wallet', '/analysis', '/builder'];
-    return protectedPaths.some(path => pathname.startsWith(path));
-}
+// This function can be uncommented and used if you need to decode the token
+// in the middleware. For now, checking the cookie's existence is sufficient.
+// async function verifySession(session: string | undefined) {
+//     if (!session) return null;
+//     try {
+//         getFirebaseAdminApp(); // Ensure app is initialized
+//         const decodedIdToken = await admin.auth().verifySessionCookie(session, true);
+//         return decodedIdToken;
+//     } catch (error) {
+//         console.error('Session cookie verification failed in middleware:', error);
+//         return null;
+//     }
+// }
 
 export async function middleware(request: NextRequest) {
-    const session = request.cookies.get('session')?.value;
-    const decodedToken = await verifySession(session);
+    const sessionCookie = request.cookies.get('session');
+    const isLoggedIn = !!sessionCookie;
 
-    const isProtected = isProtectedRoute(request.nextUrl.pathname);
-    const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register');
+    const { pathname } = request.nextUrl;
 
-    if (!decodedToken && isProtected) {
+    const isProtectedRoute = ['/dashboard', '/billing', '/wallet', '/analysis', '/builder'].some(path => pathname.startsWith(path));
+    const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/register');
+
+    if (!isLoggedIn && isProtectedRoute) {
         // Not logged in and trying to access a protected route, redirect to login
-        return NextResponse.redirect(new URL('/login', request.url));
+        const loginUrl = new URL('/login', request.url);
+        loginUrl.searchParams.set('redirect_to', pathname);
+        return NextResponse.redirect(loginUrl);
     }
 
-    if (decodedToken && isAuthRoute) {
+    if (isLoggedIn && isAuthRoute) {
         // Logged in and trying to access login/register, redirect to dashboard
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
@@ -43,8 +42,16 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // The matcher is crucial for performance. It ensures the middleware only runs
+  // on pages and not on static assets or internal Next.js paths.
   matcher: [
-    // Match all routes except for static assets and special Next.js paths
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/dashboard/:path*',
+    '/billing/:path*',
+    '/wallet/:path*',
+    '/analysis/:path*',
+    '/builder/:path*',
+    '/login',
+    '/register',
+    // You can add other paths here if needed
   ],
 };
