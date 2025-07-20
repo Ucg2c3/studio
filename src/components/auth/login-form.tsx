@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { LogInIcon, Mail, Lock } from 'lucide-react';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { app } from '@/lib/firebase'; // Import the initialized client-side app
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { getFirebaseAuth } from '@/lib/firebase'; // Import the new function
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -47,7 +47,7 @@ export function LoginForm() {
         throw new Error("Email and password are required.");
       }
       
-      const auth = getAuth(app);
+      const auth = getFirebaseAuth();
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
 

@@ -1,8 +1,8 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged, getAuth, User } from 'firebase/auth';
-import { app } from '@/lib/firebase'; // Ensure you have firebase client initialized
+import { onAuthStateChanged, type User } from 'firebase/auth';
+import { getFirebaseAuth } from '@/lib/firebase'; // Ensure you have firebase client initialized
 
 interface AuthUser {
   uid: string;
@@ -16,7 +16,7 @@ export function useUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getAuth(app);
+    const auth = getFirebaseAuth();
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser: User | null) => {
       if (firebaseUser) {
         setUser({

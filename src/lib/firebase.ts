@@ -1,6 +1,6 @@
 
-import { initializeApp, getApps, getApp, type FirebaseOptions } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp, getApps, getApp, type FirebaseApp, type FirebaseOptions } from 'firebase/app';
+import { getAuth, type Auth } from 'firebase/auth';
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,21 +11,20 @@ const firebaseConfig: FirebaseOptions = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase for Client-side, and only on the client-side
-let app;
-let auth;
-
-if (typeof window !== 'undefined') {
-    if (!getApps().length) {
-        if (!firebaseConfig.apiKey) {
-            throw new Error('NEXT_PUBLIC_FIREBASE_API_KEY is not set in .env');
-        }
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-    } else {
-        app = getApp();
-        auth = getAuth(app);
+// This function ensures that we initialize the app only once.
+function getFirebaseApp(): FirebaseApp {
+  if (!getApps().length) {
+    if (!firebaseConfig.apiKey) {
+        throw new Error('NEXT_PUBLIC_FIREBASE_API_KEY is not set in .env');
     }
+    return initializeApp(firebaseConfig);
+  }
+  return getApp();
 }
 
-export { app, auth };
+function getFirebaseAuth(): Auth {
+    return getAuth(getFirebaseApp());
+}
+
+
+export { getFirebaseApp, getFirebaseAuth };
