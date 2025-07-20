@@ -2,144 +2,87 @@
 'use client';
 
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { useFormState, useFormStatus } from 'react-dom';
+import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { UserPlusIcon, Mail, Lock, UserCircle2Icon } from 'lucide-react';
+import { registerAction } from '@/app/auth/actions';
 
-const registerFormSchema = z.object({
-  fullName: z.string().min(3, { message: 'Full name must be at least 3 characters.'}),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
-  confirmPassword: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
-}).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"], // path of error
-});
-
-type RegisterFormValues = z.infer<typeof registerFormSchema>;
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+      {pending ? (
+        'Creating Account...'
+      ) : (
+        <>
+          <UserPlusIcon className="mr-2 h-4 w-4" /> Create Account
+        </>
+      )}
+    </Button>
+  );
+}
 
 export function RegisterForm() {
+  const router = useRouter();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [state, formAction] = useFormState(registerAction, null);
 
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerFormSchema),
-    defaultValues: {
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-  });
-
-  async function onSubmit(data: RegisterFormValues) {
-    setIsLoading(true);
-    // Simulate API call for registration
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    toast({
-      title: 'Registration Successful (Mock)',
-      description: `Welcome, ${data.fullName}! Your account has been created. You can now sign in.`,
-      variant: 'default'
-    });
-    // In a real application, you would handle actual user creation,
-    // potentially auto-login, and redirect.
-    // For example: router.push('/dashboard');
-    form.reset();
-  }
+  React.useEffect(() => {
+    if (state?.success) {
+      toast({
+        title: 'Registration Successful',
+        description: state.message || 'You can now sign in.',
+      });
+      router.push('/login');
+    } else if (state?.error) {
+       const errorMessages = Object.values(state.error).flat().join(' ');
+      toast({
+        title: 'Registration Failed',
+        description: errorMessages || 'An unknown error occurred.',
+        variant: 'destructive',
+      });
+    }
+  }, [state, toast, router]);
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="fullName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm">Full Name</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <UserCircle2Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input placeholder="Your full name" {...field} className="pl-10"/>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm">Email Address</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input type="email" placeholder="name@example.com" {...field} className="pl-10"/>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm">Password</FormLabel>
-              <FormControl>
-                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm">Confirm Password</FormLabel>
-              <FormControl>
-                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-          {isLoading ? (
-            'Creating Account...'
-          ) : (
-            <>
-              <UserPlusIcon className="mr-2 h-4 w-4" /> Create Account
-            </>
-          )}
-        </Button>
-        <p className="text-center text-xs text-muted-foreground pt-2">
-          This is a mock registration. No real user data is stored.
-        </p>
-      </form>
-    </Form>
+    <form action={formAction} className="space-y-6">
+      <div className="space-y-2">
+        <label htmlFor="fullName">Full Name</label>
+        <div className="relative">
+          <UserCircle2Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input id="fullName" name="fullName" placeholder="Your full name" required className="pl-10" />
+        </div>
+        {state?.error?.fullName && <p className="text-sm font-medium text-destructive">{state.error.fullName}</p>}
+      </div>
+      <div className="space-y-2">
+        <label htmlFor="email">Email Address</label>
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input id="email" name="email" type="email" placeholder="name@example.com" required className="pl-10" />
+        </div>
+        {state?.error?.email && <p className="text-sm font-medium text-destructive">{state.error.email}</p>}
+      </div>
+      <div className="space-y-2">
+        <label htmlFor="password">Password</label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input id="password" name="password" type="password" placeholder="••••••••" required className="pl-10" />
+        </div>
+        {state?.error?.password && <p className="text-sm font-medium text-destructive">{state.error.password}</p>}
+      </div>
+      <div className="space-y-2">
+        <label htmlFor="confirmPassword">Confirm Password</label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" required className="pl-10" />
+        </div>
+         {state?.error?.confirmPassword && <p className="text-sm font-medium text-destructive">{state.error.confirmPassword}</p>}
+      </div>
+      <SubmitButton />
+      {state?.error?.form && <p className="text-sm font-medium text-destructive text-center">{state.error.form}</p>}
+    </form>
   );
 }
