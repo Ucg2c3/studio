@@ -14,25 +14,20 @@ const firebaseConfig: FirebaseOptions = {
 let app: FirebaseApp;
 let auth: Auth;
 
-function getFirebaseApp(): FirebaseApp {
-  if (!getApps().length) {
-    if (!firebaseConfig.apiKey) {
-        throw new Error('NEXT_PUBLIC_FIREBASE_API_KEY is not set in .env');
-    }
-    app = initializeApp(firebaseConfig);
-  } else {
-    app = getApp();
-  }
-  return app;
-}
-
 function getFirebaseAuth(): Auth {
-    const app = getFirebaseApp();
-    if (!auth) {
-        auth = getAuth(app);
+  if (!auth) {
+    if (getApps().length === 0) {
+      if (!firebaseConfig.apiKey) {
+          throw new Error('NEXT_PUBLIC_FIREBASE_API_KEY is not set in .env');
+      }
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApp();
     }
-    return auth;
+    auth = getAuth(app);
+  }
+  return auth;
 }
 
 
-export { getFirebaseApp, getFirebaseAuth };
+export { getFirebaseAuth };
