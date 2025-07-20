@@ -1,24 +1,9 @@
 
 import { NextResponse, type NextRequest } from 'next/server';
-import { admin, getFirebaseAdminApp } from '@/lib/firebase-admin';
-
-// This function can be uncommented and used if you need to decode the token
-// in the middleware. For now, checking the cookie's existence is sufficient.
-// async function verifySession(session: string | undefined) {
-//     if (!session) return null;
-//     try {
-//         getFirebaseAdminApp(); // Ensure app is initialized
-//         const decodedIdToken = await admin.auth().verifySessionCookie(session, true);
-//         return decodedIdToken;
-//     } catch (error) {
-//         console.error('Session cookie verification failed in middleware:', error);
-//         return null;
-//     }
-// }
 
 export async function middleware(request: NextRequest) {
     const sessionCookie = request.cookies.get('session');
-    const isLoggedIn = !!sessionCookie;
+    const isLoggedIn = !!sessionCookie?.value;
 
     const { pathname } = request.nextUrl;
 

@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import { cookies } from 'next/headers';
-import { admin, getFirebaseAdminApp } from '@/lib/firebase-admin';
+import { admin, getFirebaseAdminApp, adminAuth } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -22,7 +22,6 @@ const registerFormSchema = z.object({
 });
 
 export async function registerAction(prevState: any, formData: FormData) {
-  getFirebaseAdminApp();
   const validatedFields = registerFormSchema.safeParse(Object.fromEntries(formData));
 
   if (!validatedFields.success) {
@@ -30,11 +29,12 @@ export async function registerAction(prevState: any, formData: FormData) {
       error: validatedFields.error.flatten().fieldErrors,
     };
   }
-
+  
+  const auth = adminAuth(); // Get auth instance after ensuring app is initialized.
   const { email, password, fullName } = validatedFields.data;
 
   try {
-    await admin.auth().createUser({
+    await auth.createUser({
       email,
       password,
       displayName: fullName,
