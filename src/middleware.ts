@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { adminAuth, getFirebaseAdminApp } from '@/lib/firebase-admin';
 import { cookies } from 'next/headers';
 
+export const runtime = 'nodejs';
+
 async function checkAuth(request: NextRequest): Promise<boolean> {
   const sessionCookie = cookies().get('session')?.value;
   if (!sessionCookie) {
