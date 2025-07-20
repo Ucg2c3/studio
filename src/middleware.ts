@@ -1,14 +1,14 @@
 
 import { NextResponse, type NextRequest } from 'next/server';
-import { getFirebaseAdminApp, admin } from '@/lib/firebase-admin';
 
 // This is the crucial change: force the middleware to run on the Node.js runtime.
 export const runtime = 'nodejs';
 
-// Initialize the admin app
-getFirebaseAdminApp();
-
 export async function middleware(request: NextRequest) {
+  // Import and initialize Firebase Admin SDK within the function
+  const { admin, getFirebaseAdminApp } = await import('@/lib/firebase-admin');
+  getFirebaseAdminApp();
+  
   const session = request.cookies.get('session')?.value;
 
   // If no session cookie, redirect to login for protected routes
