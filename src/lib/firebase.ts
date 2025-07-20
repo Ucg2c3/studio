@@ -11,19 +11,27 @@ const firebaseConfig: FirebaseOptions = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// This function ensures that we initialize the app only once.
+let app: FirebaseApp;
+let auth: Auth;
+
 function getFirebaseApp(): FirebaseApp {
   if (!getApps().length) {
     if (!firebaseConfig.apiKey) {
         throw new Error('NEXT_PUBLIC_FIREBASE_API_KEY is not set in .env');
     }
-    return initializeApp(firebaseConfig);
+    app = initializeApp(firebaseConfig);
+  } else {
+    app = getApp();
   }
-  return getApp();
+  return app;
 }
 
 function getFirebaseAuth(): Auth {
-    return getAuth(getFirebaseApp());
+    const app = getFirebaseApp();
+    if (!auth) {
+        auth = getAuth(app);
+    }
+    return auth;
 }
 
 
