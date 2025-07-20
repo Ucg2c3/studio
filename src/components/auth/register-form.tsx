@@ -34,9 +34,9 @@ export function RegisterForm() {
     if (state?.success) {
       toast({
         title: 'Registration Successful',
-        description: state.message || 'You are now logged in.',
+        description: state.message || 'Account created. Please log in.',
       });
-      router.push('/dashboard'); // Redirect to dashboard since user is now logged in
+      router.push('/login'); // Redirect to login page after successful registration
     } else if (state?.error) {
        const errorMessages = Object.values(state.error).flat().join(' ');
       toast({

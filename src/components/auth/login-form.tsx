@@ -2,14 +2,15 @@
 'use client';
 
 import * as React from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { LogInIcon, Mail, Lock } from 'lucide-react';
-import { loginAction } from '@/app/auth/actions';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { app } from '@/lib/firebase'; // Import the initialized client-side app
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -29,34 +30,75 @@ function SubmitButton() {
 export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
-  const [state, formAction] = useFormState(loginAction, null);
+  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
-    if (state?.success) {
-      toast({
-        title: 'Login Successful',
-        description: 'Welcome back!',
+  const handleLogin = async (formData: FormData) => {
+    setLoading(true);
+    setError(null);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    try {
+      const auth = getAuth(app);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const idToken = await userCredential.user.getIdToken();
+
+      // Send the ID token to our API route to set the session cookie
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idToken }),
       });
-      router.push('/dashboard');
-    } else if (state?.error) {
-      const errorMessages = Object.values(state.error).flat().join(' ');
+
+      if (response.ok) {
+        toast({
+          title: 'Login Successful',
+          description: 'Welcome back!',
+        });
+        router.push('/dashboard');
+        router.refresh(); // This ensures the new cookie is picked up by the server
+      } else {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create session.');
+      }
+    } catch (error: any) {
+      console.error("Login Error:", error);
+      let errorMessage = 'An unexpected error occurred.';
+      if (error.code) {
+        switch (error.code) {
+          case 'auth/invalid-credential':
+          case 'auth/wrong-password':
+          case 'auth/user-not-found':
+            errorMessage = 'Invalid email or password. Please try again.';
+            break;
+          default:
+            errorMessage = 'Failed to sign in. Please check your credentials.';
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      setError(errorMessage);
       toast({
         title: 'Login Failed',
-        description: errorMessages || 'An unknown error occurred.',
+        description: errorMessage,
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
-  }, [state, toast, router]);
+  };
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form action={handleLogin} className="space-y-6">
       <div className="space-y-2">
         <label htmlFor="email" className="text-sm font-medium">Email Address</label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input id="email" name="email" type="email" placeholder="name@example.com" required className="pl-10" />
         </div>
-        {state?.error?.email && <p className="text-sm font-medium text-destructive">{state.error.email}</p>}
       </div>
       <div className="space-y-2">
         <label htmlFor="password">Password</label>
@@ -64,10 +106,9 @@ export function LoginForm() {
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input id="password" name="password" type="password" placeholder="••••••••" required className="pl-10" />
         </div>
-        {state?.error?.password && <p className="text-sm font-medium text-destructive">{state.error.password}</p>}
       </div>
       <SubmitButton />
-      {state?.error?.form && <p className="text-sm font-medium text-destructive text-center">{state.error.form}</p>}
+      {error && <p className="text-sm font-medium text-destructive text-center">{error}</p>}
     </form>
   );
 }

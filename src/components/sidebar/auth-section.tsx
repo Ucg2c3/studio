@@ -4,22 +4,36 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogInIcon, UserPlusIcon, LogOutIcon } from 'lucide-react';
 import { useUser } from '@/hooks/use-user';
-import { logoutAction } from '@/app/auth/actions';
 import { useTransition } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export function AuthSection() {
   const { user, loading } = useUser();
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     startTransition(async () => {
-      await logoutAction();
-      toast({
-        title: 'Logged Out',
-        description: 'You have been successfully logged out.',
+      const response = await fetch('/api/auth/logout', {
+          method: 'POST',
       });
+
+      if (response.ok) {
+          toast({
+            title: 'Logged Out',
+            description: 'You have been successfully logged out.',
+          });
+          router.push('/login');
+          router.refresh();
+      } else {
+          toast({
+              title: 'Logout Failed',
+              description: 'Something went wrong. Please try again.',
+              variant: 'destructive'
+          })
+      }
     });
   };
 
@@ -40,12 +54,10 @@ export function AuthSection() {
             <p className="text-sm font-medium text-foreground truncate">Welcome, {user.name || user.email}!</p>
             <p className="text-xs text-muted-foreground">Manage your account and settings.</p>
           </div>
-          <form action={handleLogout}>
-            <Button variant="ghost" className="w-full justify-start text-sm" size="sm" type="submit" disabled={isPending}>
-              <LogOutIcon className="mr-2 h-4 w-4" /> 
-              {isPending ? 'Logging out...' : 'Log Out'}
-            </Button>
-          </form>
+          <Button variant="ghost" className="w-full justify-start text-sm" size="sm" onClick={handleLogout} disabled={isPending}>
+            <LogOutIcon className="mr-2 h-4 w-4" /> 
+            {isPending ? 'Logging out...' : 'Log Out'}
+          </Button>
         </>
       ) : (
         <>
