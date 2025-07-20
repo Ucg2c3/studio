@@ -12,6 +12,7 @@ export function FirebaseProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<Auth | null>(null);
 
   useEffect(() => {
+    // Define the config object inside useEffect to ensure it runs only on the client
     const firebaseConfig = {
       apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
       authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -21,16 +22,15 @@ export function FirebaseProvider({ children }: { children: React.ReactNode }) {
       appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
     };
     
-    if (!firebaseConfig.apiKey) {
-      console.error("Firebase API Key is missing. Please check your .env file.");
-      return;
+    // Check if the API key is actually available.
+    if (firebaseConfig.apiKey) {
+      const initializedApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+      const initializedAuth = getAuth(initializedApp);
+      setApp(initializedApp);
+      setAuth(initializedAuth);
+    } else {
+        console.error("Firebase API Key is missing. Please check your .env file and ensure it's prefixed with NEXT_PUBLIC_");
     }
-
-    const initializedApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-    const initializedAuth = getAuth(initializedApp);
-
-    setApp(initializedApp);
-    setAuth(initializedAuth);
 
   }, []);
 
