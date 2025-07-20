@@ -30,6 +30,8 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '2mb', // Increase body size limit for server actions if needed
     },
+    // This is required to allow the development environment to make requests to the Next.js server.
+    allowedDevOrigins: ["https://*.cloudworkstations.dev"],
   },
 };
 
