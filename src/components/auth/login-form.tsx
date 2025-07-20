@@ -2,7 +2,6 @@
 'use client';
 
 import * as React from 'react';
-import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -11,21 +10,6 @@ import { useToast } from '@/hooks/use-toast';
 import { LogInIcon, Mail, Lock } from 'lucide-react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useFirebase } from '@/lib/firebase-client';
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-      {pending ? (
-        'Signing In...'
-      ) : (
-        <>
-          <LogInIcon className="mr-2 h-4 w-4" /> Sign In
-        </>
-      )}
-    </Button>
-  );
-}
 
 export function LoginForm() {
   const router = useRouter();
