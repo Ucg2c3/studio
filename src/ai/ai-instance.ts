@@ -1,4 +1,4 @@
-import {genkit} from 'genkit';
+import {genkit, configureGenkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 
 export const ai = genkit({
@@ -7,4 +7,6 @@ export const ai = genkit({
       apiKey: process.env.GOOGLE_GENAI_API_KEY,
     }),
   ],
+  logLevel: 'debug',
+  enableTracingAndMetrics: true,
 });

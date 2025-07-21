@@ -9,12 +9,9 @@
  * - GeneratePrototypeOutput - The return type for the generatePrototype function.
  */
 
-import {ai} from '@/ai/ai-instance';
+import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {defineFlow, run} from 'genkit/flow';
-import {definePrompt} from 'genkit/prompt';
-import {geminiPro} from '@genkit-ai/googleai';
-import {generate} from 'genkit/ai';
+import {geminiPro} from '@genkit-ai/google-ai';
 
 const GeneratePrototypeInputSchema = z.object({
   appDescription: z.string().describe('A detailed description of the desired Next.js application, including layout, components, and functionality.'),
@@ -28,14 +25,14 @@ const GeneratePrototypeOutputSchema = z.object({
 export type GeneratePrototypeOutput = z.infer<typeof GeneratePrototypeOutputSchema>;
 
 export async function generatePrototype(input: GeneratePrototypeInput): Promise<GeneratePrototypeOutput> {
-  return run('generatePrototypeFlow', () => generatePrototypeFlow(input));
+  return generatePrototypeFlow(input);
 }
 
-const generatePrototypePrompt = definePrompt({
-  name: 'generatePrototypePrompt',
-  inputSchema: GeneratePrototypeInputSchema,
-  outputSchema: GeneratePrototypeOutputSchema,
-  prompt: `You are an AI that can generate Next.js prototype application files based on user descriptions.
+const prompt = ai.definePrompt({
+    name: 'generatePrototypePrompt',
+    input: { schema: GeneratePrototypeInputSchema },
+    output: { schema: GeneratePrototypeOutputSchema },
+    prompt: `You are an AI that can generate Next.js prototype application files based on user descriptions.
 
 Based on the following description, generate the content for a single Next.js App Router file (e.g., page.tsx or a component.tsx):
 
@@ -63,31 +60,22 @@ When generating the prototype, adhere to the following style guidelines (these a
 
 The 'prototypeCode' output MUST be the content of a single React component or page file (e.g., a page.tsx or component.tsx). Do NOT generate multiple files, a full project structure, or helper utilities in 'prototypeCode'.
 
-Also, provide a 'layoutDescription' detailing the generated layout, key components used, and notable features implemented in the code, emphasizing how production-quality standards were met.
+Also, provide a 'layoutDescription' detailing the generated layout, key components used, and notable features implemented in the code, emphasizing how a production-quality standards were met.
 
 If the appDescription mentions security, emphasize security features in the user interface, such as visual cues for encryption (e.g., lock icons using Lucide), secure connections (e.g., shield icons, indicators for HTTPS), and network isolation concepts if they can be visually represented. If a security report is requested, include a dedicated section or card in the UI for displaying this report, styled appropriately.
 `,
 });
 
-export const generatePrototypeFlow = defineFlow(
+const generatePrototypeFlow = ai.defineFlow(
   {
     name: 'generatePrototypeFlow',
     inputSchema: GeneratePrototypeInputSchema,
     outputSchema: GeneratePrototypeOutputSchema,
   },
-  async (input: GeneratePrototypeInput) => {
-    const llmResponse = await generate({
-        prompt: generatePrototypePrompt,
-        model: geminiPro,
-        input: input,
-        output: {
-            schema: GeneratePrototypeOutputSchema,
-        },
-    });
-
-    const output = llmResponse.output();
+  async (input) => {
+    const {output} = await prompt(input);
     if (!output) {
-      throw new Error('AI failed to generate prototype. Output was null.');
+        throw new Error('AI failed to generate prototype. Output was null.');
     }
     return output;
   }

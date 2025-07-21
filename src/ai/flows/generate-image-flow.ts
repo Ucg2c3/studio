@@ -5,14 +5,12 @@
  *
  * - generateImage - A function that handles the image generation process.
  * - GenerateImageInput - The input type for the generateImage function.
- * - GenerateImageOutput - The return type for the generateImage function.
+ * - GenerateImageOutput - The return type for the generateImageOutput function.
  */
 
-import {ai} from '@/ai/ai-instance';
+import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {defineFlow, run} from 'genkit/flow';
 import {geminiProVision} from '@genkit-ai/googleai';
-import {generate} from 'genkit/ai';
 
 const GenerateImageInputSchema = z.object({
   promptText: z.string().describe('A text prompt describing the image to be generated.'),
@@ -26,29 +24,28 @@ const GenerateImageOutputSchema = z.object({
 export type GenerateImageOutput = z.infer<typeof GenerateImageOutputSchema>;
 
 export async function generateImage(input: GenerateImageInput): Promise<GenerateImageOutput> {
-  return run('generateImageFlow', () => generateImageFlow(input));
+  return generateImageFlow(input);
 }
 
-export const generateImageFlow = defineFlow(
+const generateImageFlow = ai.defineFlow(
   {
     name: 'generateImageFlow',
     inputSchema: GenerateImageInputSchema,
     outputSchema: GenerateImageOutputSchema,
   },
-  async (input: GenerateImageInput) => {
+  async (input) => {
     try {
-      const llmResponse = await generate({
+      const llmResponse = await ai.generate({
         model: geminiProVision,
         prompt: `Generate an image of: ${input.promptText}. Do not add any text to the image.`,
       });
 
-      const imagePart = llmResponse.media();
-      if (imagePart) {
-        return { imageDataUri: imagePart.url };
+      const media = llmResponse.media;
+      if (media) {
+        return { imageDataUri: media.url };
       } else {
-        const errorText = llmResponse.text();
-        console.error('Image generation failed or no media URL:', errorText);
-        return { errorMessage: `Image generation failed: ${errorText}` };
+        console.error('Image generation failed or no media URL was returned.');
+        return { errorMessage: `Image generation failed: No media was returned from the model.` };
       }
     } catch (error) {
       console.error('Error in generateImageFlow:', error);
