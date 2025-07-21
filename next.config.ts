@@ -32,7 +32,6 @@ const nextConfig: NextConfig = {
     },
     // This is required to allow the development environment to make requests to the Next.js server.
     allowedDevOrigins: ["https://*.cloudworkstations.dev"],
-    serverComponentsExternalPackages: ['firebase-admin'],
   },
 };
 
