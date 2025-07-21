@@ -124,7 +124,6 @@ export function VirtualCardDisplay({ onNewCard }: VirtualCardDisplayProps) {
           </div>
         </div>
       </Card>
-
       <div className="flex flex-col sm:flex-row gap-2 justify-center">
         <Button onClick={toggleShowDetails} variant="outline" className="flex-1">
           {showDetails ? <EyeOffIcon className="mr-2 h-4 w-4" /> : <EyeIcon className="mr-2 h-4 w-4" />}
