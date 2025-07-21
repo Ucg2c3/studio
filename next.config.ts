@@ -1,24 +1,3 @@
 
-import type {NextConfig} from 'next';
-
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      }
-    ],
-  },
-};
-
-export default nextConfig;
+// This file is intentionally left blank. 
+// The configuration has been moved to next.config.js to resolve a compatibility issue.

@@ -11,6 +11,10 @@
 
 import {ai} from '@/ai/ai-instance';
 import {z} from 'genkit';
+import {defineFlow, run} from 'genkit/flow';
+import {definePrompt} from 'genkit/prompt';
+import {geminiPro} from '@genkit-ai/googleai';
+import {generate} from 'genkit/ai';
 
 const GeneratePrototypeInputSchema = z.object({
   appDescription: z.string().describe('A detailed description of the desired Next.js application, including layout, components, and functionality.'),
@@ -24,13 +28,13 @@ const GeneratePrototypeOutputSchema = z.object({
 export type GeneratePrototypeOutput = z.infer<typeof GeneratePrototypeOutputSchema>;
 
 export async function generatePrototype(input: GeneratePrototypeInput): Promise<GeneratePrototypeOutput> {
-  return generatePrototypeFlow(input);
+  return run('generatePrototypeFlow', () => generatePrototypeFlow(input));
 }
 
-const prompt = ai.definePrompt({
+const generatePrototypePrompt = definePrompt({
   name: 'generatePrototypePrompt',
-  input: { schema: GeneratePrototypeInputSchema },
-  output: { schema: GeneratePrototypeOutputSchema },
+  inputSchema: GeneratePrototypeInputSchema,
+  outputSchema: GeneratePrototypeOutputSchema,
   prompt: `You are an AI that can generate Next.js prototype application files based on user descriptions.
 
 Based on the following description, generate the content for a single Next.js App Router file (e.g., page.tsx or a component.tsx):
@@ -65,14 +69,23 @@ If the appDescription mentions security, emphasize security features in the user
 `,
 });
 
-const generatePrototypeFlow = ai.defineFlow(
+export const generatePrototypeFlow = defineFlow(
   {
     name: 'generatePrototypeFlow',
     inputSchema: GeneratePrototypeInputSchema,
     outputSchema: GeneratePrototypeOutputSchema,
   },
   async (input: GeneratePrototypeInput) => {
-    const {output} = await prompt(input);
+    const llmResponse = await generate({
+        prompt: generatePrototypePrompt,
+        model: geminiPro,
+        input: input,
+        output: {
+            schema: GeneratePrototypeOutputSchema,
+        },
+    });
+
+    const output = llmResponse.output();
     if (!output) {
       throw new Error('AI failed to generate prototype. Output was null.');
     }

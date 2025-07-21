@@ -10,6 +10,9 @@
 
 import {ai} from '@/ai/ai-instance';
 import {z} from 'genkit';
+import {defineFlow, run} from 'genkit/flow';
+import {geminiProVision} from '@genkit-ai/googleai';
+import {generate} from 'genkit/ai';
 
 const GenerateImageInputSchema = z.object({
   promptText: z.string().describe('A text prompt describing the image to be generated.'),
@@ -23,10 +26,10 @@ const GenerateImageOutputSchema = z.object({
 export type GenerateImageOutput = z.infer<typeof GenerateImageOutputSchema>;
 
 export async function generateImage(input: GenerateImageInput): Promise<GenerateImageOutput> {
-  return generateImageFlow(input);
+  return run('generateImageFlow', () => generateImageFlow(input));
 }
 
-const generateImageFlow = ai.defineFlow(
+export const generateImageFlow = defineFlow(
   {
     name: 'generateImageFlow',
     inputSchema: GenerateImageInputSchema,
@@ -34,19 +37,18 @@ const generateImageFlow = ai.defineFlow(
   },
   async (input: GenerateImageInput) => {
     try {
-      const {media, finishReason, status} = await ai.generate({
-        model: 'googleai/gemini-2.0-flash-exp', // IMPORTANT: Use the specified model for image generation
-        prompt: input.promptText,
-        config: {
-          responseModalities: ['TEXT', 'IMAGE'], // MUST provide both TEXT and IMAGE
-        },
+      const llmResponse = await generate({
+        model: geminiProVision,
+        prompt: `Generate an image of: ${input.promptText}. Do not add any text to the image.`,
       });
 
-      if (status === 'success' && media?.url) {
-        return { imageDataUri: media.url };
+      const imagePart = llmResponse.media();
+      if (imagePart) {
+        return { imageDataUri: imagePart.url };
       } else {
-        console.error('Image generation failed or no media URL:', {finishReason, status, media});
-        return { errorMessage: `Image generation failed. Status: ${status}, Reason: ${finishReason}` };
+        const errorText = llmResponse.text();
+        console.error('Image generation failed or no media URL:', errorText);
+        return { errorMessage: `Image generation failed: ${errorText}` };
       }
     } catch (error) {
       console.error('Error in generateImageFlow:', error);
