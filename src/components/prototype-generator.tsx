@@ -3,35 +3,16 @@
 
 import * as React from 'react';
 import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom'; // Still needed for SubmitButton
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { useFormStatus } from 'react-dom';
 import { Copy, Check } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { generateAppPrototypeAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-
-const formSchema = z.object({
-  appDescription: z.string().min(10, {
-    message: 'Description must be at least 10 characters.',
-  }),
-});
-
-type FormSchemaType = z.infer<typeof formSchema>;
+import { Label } from '@/components/ui/label';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -46,42 +27,31 @@ export function PrototypeGenerator() {
   const { toast } = useToast();
   const [copied, setCopied] = React.useState(false);
 
-  // useActionState hook manages state updates from server actions
-  // Destructure isPending (the third item) from useActionState
-  const [actionState, formAction, isActionPending] = useActionState(generateAppPrototypeAction, {
+  const [state, formAction, isPending] = useActionState(generateAppPrototypeAction, {
     message: '',
     data: undefined,
     error: undefined,
   });
 
-  // useForm for client-side validation and form management
-  const form = useForm<FormSchemaType>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      appDescription: '',
-    },
-  });
-
   React.useEffect(() => {
-    // Use actionState for messages and errors
-    if (actionState.message && !actionState.error) {
+    if (state.message && !state.error) {
       toast({
         title: "Success!",
-        description: actionState.message,
+        description: state.message,
         variant: "default",
       });
-    } else if (actionState.error) {
+    } else if (state.error) {
       toast({
         title: 'Error',
-        description: actionState.error,
+        description: state.error,
         variant: 'destructive',
       });
     }
-  }, [actionState, toast]);
+  }, [state, toast]);
 
   const handleCopy = () => {
-    if (actionState.data?.prototypeCode) {
-      navigator.clipboard.writeText(actionState.data.prototypeCode)
+    if (state.data?.prototypeCode) {
+      navigator.clipboard.writeText(state.data.prototypeCode)
         .then(() => {
           setCopied(true);
           toast({ description: 'Code copied to clipboard!' });
@@ -95,13 +65,13 @@ export function PrototypeGenerator() {
   };
 
   const handleExport = () => {
-      if (actionState.data?.prototypeCode) {
+      if (state.data?.prototypeCode) {
            toast({
             title: "Export Started",
             description: "Generating Next.js project files... (This is a placeholder)",
           });
            try {
-                const blob = new Blob([actionState.data.prototypeCode], { type: 'text/plain;charset=utf-8' });
+                const blob = new Blob([state.data.prototypeCode], { type: 'text/plain;charset=utf-8' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
                 link.download = 'prototype-app.tsx';
@@ -136,18 +106,13 @@ export function PrototypeGenerator() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form action={formAction} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="appDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="appDescription">App Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        id="appDescription"
-                        placeholder={`An agentic AI platform designed to securely connect different cloud services and tech company APIs.  The core features include:
+          <form action={formAction} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="appDescription">App Description</Label>
+                <Textarea
+                  id="appDescription"
+                  name="appDescription"
+                  placeholder={`An agentic AI platform designed to securely connect different cloud services and tech company APIs.  The core features include:
 
 1.  Autonomous Agent Management:  The AI should be able to create, manage, and deploy autonomous agents, each responsible for a specific integration task.  These agents operate independently but can communicate with each other.
 
@@ -165,20 +130,13 @@ The prototype should demonstrate a user interface where users can:
 *   Define data mappings between cloud services.
 *   Monitor agent activity and network status.
 *   View logs and reports.`}
-                        className="min-h-[150px] resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      The more detail you provide, the better the generated prototype.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  className="min-h-[150px] resize-none"
+                  required
+                />
+                 {state.error && <p className="text-sm font-medium text-destructive">{state.error}</p>}
+              </div>
               <SubmitButton />
             </form>
-          </Form>
         </CardContent>
       </Card>
 
@@ -190,19 +148,18 @@ The prototype should demonstrate a user interface where users can:
           </CardDescription>
         </CardHeader>
         <CardContent>
-            {/* Use isActionPending from useActionState for skeleton display */}
-            {isActionPending ? (
+            {isPending ? (
                 <div className="space-y-4">
                     <Skeleton className="h-4 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
                     <Skeleton className="h-32 w-full" />
                     <Skeleton className="h-10 w-24" />
                 </div>
-            ) : actionState.data ? ( // Use actionState.data to check for results
+            ) : state.data ? (
              <div className="space-y-4">
                 <div>
                     <h3 className="font-semibold mb-2">Layout Description:</h3>
-                    <p className="text-sm text-muted-foreground">{actionState.data.layoutDescription}</p>
+                    <p className="text-sm text-muted-foreground">{state.data.layoutDescription}</p>
                 </div>
                 <div className="relative">
                     <h3 className="font-semibold mb-2">Prototype Code:</h3>
@@ -216,7 +173,7 @@ The prototype should demonstrate a user interface where users can:
                         {copied ? <Check className="h-4 w-4 text-accent" /> : <Copy className="h-4 w-4" />}
                     </Button>
                     <pre className="bg-secondary p-4 rounded-md overflow-auto text-sm max-h-[400px]">
-                        <code>{actionState.data.prototypeCode}</code>
+                        <code>{state.data.prototypeCode}</code>
                     </pre>
                 </div>
                  <Button onClick={handleExport} variant="outline" className="w-full md:w-auto">
