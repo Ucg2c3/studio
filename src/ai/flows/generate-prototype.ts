@@ -9,7 +9,7 @@
  * - GeneratePrototypeOutput - The return type for the generatePrototype function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from '@/ai/ai-instance';
 import {z} from 'genkit';
 import {geminiPro} from '@genkit-ai/google-ai';
 

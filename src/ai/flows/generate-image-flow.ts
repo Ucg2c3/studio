@@ -8,7 +8,7 @@
  * - GenerateImageOutput - The return type for the generateImageOutput function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from '@/ai/ai-instance';
 import {z} from 'genkit';
 import {geminiProVision} from '@genkit-ai/googleai';
 
