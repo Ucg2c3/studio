@@ -1,13 +1,13 @@
-[debug] [2025-07-20T15:06:56.210Z] ----------------------------------------------------------------------
-[debug] [2025-07-20T15:06:56.213Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/gv0i9ndcpzjpfi2yr06402kzy90q51ki-firebase-tools-14.10.1/lib/node_modules/firebase-tools/lib/bin/firebase.js init hosting
-[debug] [2025-07-20T15:06:56.214Z] CLI Version:   14.10.1
-[debug] [2025-07-20T15:06:56.215Z] Platform:      linux
-[debug] [2025-07-20T15:06:56.215Z] Node Version:  v20.19.1
-[debug] [2025-07-20T15:06:56.215Z] Time:          Sun Jul 20 2025 15:06:56 GMT+0000 (Coordinated Universal Time)
-[debug] [2025-07-20T15:06:56.215Z] ----------------------------------------------------------------------
+[debug] [2025-07-21T12:34:23.547Z] ----------------------------------------------------------------------
+[debug] [2025-07-21T12:34:23.549Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/gv0i9ndcpzjpfi2yr06402kzy90q51ki-firebase-tools-14.10.1/lib/node_modules/firebase-tools/lib/bin/firebase.js init hosting
+[debug] [2025-07-21T12:34:23.550Z] CLI Version:   14.10.1
+[debug] [2025-07-21T12:34:23.550Z] Platform:      linux
+[debug] [2025-07-21T12:34:23.550Z] Node Version:  v20.19.1
+[debug] [2025-07-21T12:34:23.550Z] Time:          Mon Jul 21 2025 12:34:23 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-07-21T12:34:23.551Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2025-07-20T15:06:56.224Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2025-07-20T15:07:00.289Z] Running auto auth
+[debug] [2025-07-21T12:34:23.557Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-07-21T12:34:23.558Z] > authorizing via signed-in user (ucg1cu@gmail.com)
 [info] 
      ######## #### ########  ######## ########     ###     ######  ########
      ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
