@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { LogInIcon, Mail, Lock } from 'lucide-react';
+import { LogInIcon, Mail, Lock, Shield } from 'lucide-react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useFirebase } from '@/lib/firebase-client';
 
@@ -17,6 +17,7 @@ export function LoginForm() {
   const { toast } = useToast();
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [mockLoading, setMockLoading] = React.useState(false);
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -87,30 +88,80 @@ export function LoginForm() {
     }
   };
 
+  const handleMockLogin = async () => {
+    setMockLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken: 'mock-token' }), // Send a special mock token
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Mock Login Successful',
+          description: 'Welcome, Demo User!',
+        });
+        router.push('/dashboard');
+        router.refresh();
+      } else {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create mock session.');
+      }
+    } catch (error: any) {
+       setError(error.message);
+       toast({
+        title: 'Mock Login Failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setMockLoading(false);
+    }
+  };
+
   return (
-    <form onSubmit={handleLogin} className="space-y-6">
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium">Email Address</label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input id="email" name="email" type="email" placeholder="name@example.com" required className="pl-10" />
+    <>
+      <form onSubmit={handleLogin} className="space-y-6">
+        <div className="space-y-2">
+          <label htmlFor="email" className="text-sm font-medium">Email Address</label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input id="email" name="email" type="email" placeholder="name@example.com" required className="pl-10" />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="password">Password</label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input id="password" name="password" type="password" placeholder="••••••••" required className="pl-10" />
+          </div>
+        </div>
+        <Button type="submit" disabled={loading || !auth} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+          {loading ? 'Signing In...' : (
+            <>
+              <LogInIcon className="mr-2 h-4 w-4" /> Sign In
+            </>
+          )}
+        </Button>
+        {error && <p className="text-sm font-medium text-destructive text-center">{error}</p>}
+      </form>
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
         </div>
       </div>
-      <div className="space-y-2">
-        <label htmlFor="password">Password</label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input id="password" name="password" type="password" placeholder="••••••••" required className="pl-10" />
-        </div>
-      </div>
-      <Button type="submit" disabled={loading || !auth} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-        {loading ? 'Signing In...' : (
+      <Button variant="secondary" onClick={handleMockLogin} disabled={mockLoading || loading} className="w-full">
+        {mockLoading ? 'Signing In...' : (
           <>
-            <LogInIcon className="mr-2 h-4 w-4" /> Sign In
+            <Shield className="mr-2 h-4 w-4" /> Mock Sign In
           </>
         )}
       </Button>
-      {error && <p className="text-sm font-medium text-destructive text-center">{error}</p>}
-    </form>
+    </>
   );
 }
